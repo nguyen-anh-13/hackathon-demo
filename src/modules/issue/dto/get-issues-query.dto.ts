@@ -1,8 +1,8 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiPropertyOptional, IntersectionType } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsIn, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 
-export class GetIssuesQueryDto {
+export class PaginationDto {
   @ApiPropertyOptional({ example: 1, minimum: 1, default: 1 })
   @IsOptional()
   @Transform(({ value }) => Number(value))
@@ -17,29 +17,11 @@ export class GetIssuesQueryDto {
   @Min(1)
   @Max(100)
   limit?: number = 20;
+}
 
+export class IssueFilterDto extends PaginationDto {
   @ApiPropertyOptional({ example: 'open' })
   @IsOptional()
   @IsString()
   status?: string;
-
-  @ApiPropertyOptional({ example: 'high' })
-  @IsOptional()
-  @IsString()
-  priority?: string;
-
-  @ApiPropertyOptional({ example: 'bug' })
-  @IsOptional()
-  @IsString()
-  type?: string;
-
-  @ApiPropertyOptional({ enum: ['true', 'false'] })
-  @IsOptional()
-  @IsIn(['true', 'false'])
-  isResolved?: 'true' | 'false';
-
-  @ApiPropertyOptional({ example: 'payment timeout' })
-  @IsOptional()
-  @IsString()
-  keyword?: string;
 }

@@ -35,27 +35,6 @@ export class IssueService {
       queryBuilder.andWhere('LOWER(issue.status) LIKE LOWER(:status)', { status: `%${query.status}%` });
     }
 
-    if (query.priority) {
-      queryBuilder.andWhere('LOWER(issue.priority) LIKE LOWER(:priority)', { priority: `%${query.priority}%` });
-    }
-
-    if (query.type) {
-      queryBuilder.andWhere('LOWER(issue.type) LIKE LOWER(:type)', { type: `%${query.type}%` });
-    }
-
-    if (query.isResolved) {
-      queryBuilder.andWhere('issue.is_resolved = :isResolved', {
-        isResolved: query.isResolved === 'true'
-      });
-    }
-
-    if (query.keyword) {
-      queryBuilder.andWhere(
-        '(LOWER(issue.originalContent) LIKE LOWER(:keyword) OR LOWER(issue.translatedContent) LIKE LOWER(:keyword))',
-        { keyword: `%${query.keyword}%` }
-      );
-    }
-
     const [data, total] = await queryBuilder.getManyAndCount();
 
     return {
