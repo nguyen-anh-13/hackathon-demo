@@ -84,12 +84,12 @@
     "name_jp": "カレンダー"
   },
   {
-    "name_en": "Calendar / Class Seating Chart",
-    "name_jp": "カレンダー / クラス座席表"
+    "name_en": "Class Seating Chart",
+    "name_jp": "クラス座席表"
   },
   {
-    "name_en": "Calendar / Weekly Seating Chart",
-    "name_jp": "カレンダー / 週間座席表"
+    "name_en": "Weekly Seating Chart",
+    "name_jp": "週間座席表"
   },
   {
     "name_en": "Exporting Student Schedule",
@@ -120,20 +120,24 @@
     "name_jp": "教室一覧"
   },
   {
-    "name_en": "Classroom List / Information",
-    "name_jp": "教室一覧 / 基本情報"
+    "name_en": "Information",
+    "name_jp": "基本情報"
   },
   {
-    "name_en": "Classroom List / Room",
-    "name_jp": "教室一覧 / 教室"
+    "name_en": "Room",
+    "name_jp": "教室"
   },
   {
-    "name_en": "Classroom List / Schedule",
-    "name_jp": "教室一覧 / スケジュール"
+    "name_en": "Schedule",
+    "name_jp": "スケジュール"
   },
   {
-    "name_en": "Classroom List / Timetable",
-    "name_jp": "教室一覧 / 時間割"
+    "name_en": "Classroom List",
+    "name_jp": "教室一覧"
+  },
+  {
+    "name_en": "Timetable",
+    "name_jp": "時間割"
   },
   {
     "name_en": "Confirming",
@@ -153,7 +157,11 @@
   },
   {
     "name_en": "General",
-    "name_jp": "共通 / 全般"
+    "name_jp": "全般"
+  },
+  {
+    "name_en": "General",
+    "name_jp": "共通"
   },
   {
     "name_en": "Grade Management",
@@ -212,20 +220,24 @@
     "name_jp": "ログイン"
   },
   {
-    "name_en": "Reset Password / Enter Email",
-    "name_jp": "パスワード再設定 / メールアドレス入力"
+    "name_en": "Reset Password",
+    "name_jp": "パスワード再設定"
   },
   {
-    "name_en": "Reset Password / Reset Password Enter Passwords",
-    "name_jp": "パスワード再設定 / 新パスワード入力"
+    "name_en": "Enter Email",
+    "name_jp": "メールアドレス入力"
   },
   {
-    "name_en": "Reset Password / Reset Password Uploaded Successfully",
-    "name_jp": "パスワード再設定 / 完了"
+    "name_en": "Reset Password Enter Passwords",
+    "name_jp": "新パスワード入力"
   },
   {
-    "name_en": "Reset Password / Verify OTP",
-    "name_jp": "パスワード再設定 / OTP認証"
+    "name_en": "Reset Password Uploaded Successfully",
+    "name_jp": "完了"
+  },
+  {
+    "name_en": "Verify OTP",
+    "name_jp": "OTP認証"
   },
   {
     "name_en": "Low",
@@ -292,48 +304,52 @@
     "name_jp": "生徒一覧"
   },
   {
-    "name_en": "Student List / Bank Account",
-    "name_jp": "生徒一覧 / 銀行口座"
+    "name_en": "Bank Account",
+    "name_jp": "銀行口座"
   },
   {
-    "name_en": "Student List / Basic Information",
-    "name_jp": "生徒一覧 / 基本情報"
+    "name_en": "Student List",
+    "name_jp": "生徒一覧"
   },
   {
-    "name_en": "Student List / Billing",
-    "name_jp": "生徒一覧 / 請求情報"
+    "name_en": "Basic Information",
+    "name_jp": "基本情報"
   },
   {
-    "name_en": "Student List / Compatibility Teacher",
-    "name_jp": "生徒一覧 / 相性・担当講師"
+    "name_en": "Billing",
+    "name_jp": "請求情報"
   },
   {
-    "name_en": "Student List / Correspondence History",
-    "name_jp": "生徒一覧 / 対応履歴"
+    "name_en": "Compatibility Teacher",
+    "name_jp": "相性・担当講師"
   },
   {
-    "name_en": "Student List / Notes",
-    "name_jp": "生徒一覧 / 備考・メモ"
+    "name_en": "Correspondence History",
+    "name_jp": "対応履歴"
   },
   {
-    "name_en": "Student List / Regular Class",
-    "name_jp": "生徒一覧 / 通常授業"
+    "name_en": "Notes",
+    "name_jp": "備考・メモ"
   },
   {
-    "name_en": "Student List / Sales History",
-    "name_jp": "生徒一覧 / 販売履歴"
+    "name_en": "Regular Class",
+    "name_jp": "通常授業"
   },
   {
-    "name_en": "Student List / Student Schedule",
-    "name_jp": "生徒一覧 / 生徒スケジュール"
+    "name_en": "Sales History",
+    "name_jp": "販売履歴"
+  },
+  {
+    "name_en": "Student Schedule",
+    "name_jp": "生徒スケジュール"
   },
   {
     "name_en": "Withdrawal List",
     "name_jp": "退塾生一覧"
   },
   {
-    "name_en": "Mobile / Schedule",
-    "name_jp": "モバイル / スケジュール"
+    "name_en": "Schedule",
+    "name_jp": "スケジュール"
   },
   {
     "name_en": "Support Ticket",
@@ -352,148 +368,176 @@
     "name_jp": "情報一括ダウンロード"
   },
   {
-    "name_en": "Communication / CSV Import History",
-    "name_jp": "通信 / CSVインポート履歴"
+    "name_en": "Communication",
+    "name_jp": "通信"
   },
   {
-    "name_en": "Communication / Notification",
-    "name_jp": "通信 / 通知設定"
+    "name_en": "CSV Import History",
+    "name_jp": "CSVインポート履歴"
   },
   {
-    "name_en": "Communication / Target Group",
-    "name_jp": "通信 / 配信対象グループ"
+    "name_en": "Notification",
+    "name_jp": "通知設定"
   },
   {
-    "name_en": "Communication / Teaching Report Setting",
-    "name_jp": "通信 / 指導報告書設定"
+    "name_en": "Target Group",
+    "name_jp": "配信対象グループ"
   },
   {
-    "name_en": "Organization / Area",
-    "name_jp": "組織 / エリア"
+    "name_en": "Teaching Report Setting",
+    "name_jp": "指導報告書設定"
   },
   {
-    "name_en": "Organization / Bank",
-    "name_jp": "組織 / 銀行"
+    "name_en": "Organization",
+    "name_jp": "組織"
   },
   {
-    "name_en": "Organization / Classroom",
-    "name_jp": "組織 / 教室"
+    "name_en": "Area",
+    "name_jp": "エリア"
   },
   {
-    "name_en": "Organization / Region",
-    "name_jp": "組織 / リージョン"
+    "name_en": "Bank",
+    "name_jp": "銀行"
   },
   {
-    "name_en": "Organization / User List",
-    "name_jp": "組織 / ユーザー一覧"
+    "name_en": "Classroom",
+    "name_jp": "教室"
   },
   {
-    "name_en": "Report / Ad Media",
-    "name_jp": "レポート / 広告媒体"
+    "name_en": "Region",
+    "name_jp": "リージョン"
   },
   {
-    "name_en": "Student / Billing Expense Item",
-    "name_jp": "生徒 / 請求費目"
+    "name_en": "User List",
+    "name_jp": "ユーザー一覧"
   },
   {
-    "name_en": "Student / Discount Privileges",
-    "name_jp": "生徒 / 割引・特典"
+    "name_en": "Report",
+    "name_jp": "レポート"
   },
   {
-    "name_en": "Student / Exercise Books",
-    "name_jp": "生徒 / ワーク・教材"
+    "name_en": "Ad Media",
+    "name_jp": "広告媒体"
   },
   {
-    "name_en": "Student / Privileges",
-    "name_jp": "生徒 / 特典設定"
+    "name_en": "Student",
+    "name_jp": "生徒"
   },
   {
-    "name_en": "Student / Reasons For Withdrawal",
-    "name_jp": "生徒 / 退塾 lý do (退会理由)"
+    "name_en": "Billing Expense Item",
+    "name_jp": "請求費目"
   },
   {
-    "name_en": "Student / Regular Course",
-    "name_jp": "生徒 / 通常コース"
+    "name_en": "Discount Privileges",
+    "name_jp": "割引・特典"
   },
   {
-    "name_en": "Student / School",
-    "name_jp": "生徒 / 学校"
+    "name_en": "Exercise Books",
+    "name_jp": "ワーク・教材"
   },
   {
-    "name_en": "Student / Subject",
-    "name_jp": "生徒 / 科目"
+    "name_en": "Privileges",
+    "name_jp": "特典設定"
   },
   {
-    "name_en": "Student / Training Course",
-    "name_jp": "生徒 / 講習コース"
+    "name_en": "Reasons For Withdrawal",
+    "name_jp": "退塾 lý do (退会理由)"
   },
   {
-    "name_en": "Teacher / Raise Base Wage",
-    "name_jp": "講師 / 基本給昇給"
+    "name_en": "Regular Course",
+    "name_jp": "通常コース"
   },
   {
-    "name_en": "Teacher / Raise Wage Rules",
-    "name_jp": "講師 / 昇給ルール"
+    "name_en": "School",
+    "name_jp": "学校"
+  },
+  {
+    "name_en": "Subject",
+    "name_jp": "科目"
+  },
+  {
+    "name_en": "Training Course",
+    "name_jp": "講習コース"
   },
   {
     "name_en": "Teacher",
     "name_jp": "講師"
   },
   {
-    "name_en": "Mobile / Basic Information",
-    "name_jp": "モバイル / 基本情報"
+    "name_en": "Raise Base Wage",
+    "name_jp": "基本給昇給"
   },
   {
-    "name_en": "Mobile / Salary",
-    "name_jp": "モバイル / 給与明細"
+    "name_en": "Raise Wage Rules",
+    "name_jp": "昇給ルール"
   },
   {
-    "name_en": "Mobile / Shift Request",
-    "name_jp": "モバイル / シフト希望"
+    "name_en": "Basic Information",
+    "name_jp": "基本情報"
+  },
+  {
+    "name_en": "Salary",
+    "name_jp": "給与明細"
+  },
+  {
+    "name_en": "Shift Request",
+    "name_jp": "シフト希望"
+  },
+  {
+    "name_en": "Shift Request",
+    "name_jp": "シフト希望"
   },
   {
     "name_en": "Teacher List",
     "name_jp": "講師一覧"
   },
   {
-    "name_en": "Teacher List / Bank Account",
-    "name_jp": "講師一覧 / 銀行口座"
+    "name_en": "Teacher List",
+    "name_jp": "講師一覧"
   },
   {
-    "name_en": "Teacher List / Basic Information",
-    "name_jp": "講師一覧 / 基本情報"
+    "name_en": "Bank Account",
+    "name_jp": "銀行口座"
   },
   {
-    "name_en": "Teacher List / Class",
-    "name_jp": "講師一覧 / 担当クラス"
+    "name_en": "Basic Information",
+    "name_jp": "基本情報"
   },
   {
-    "name_en": "Teacher List / Compatibility Student",
-    "name_jp": "講師一覧 / 相性・担当生徒"
+    "name_en": "Class",
+    "name_jp": "担当クラス"
   },
   {
-    "name_en": "Teacher List / Salary Increase",
-    "name_jp": "講師一覧 / 昇給履歴"
+    "name_en": "Compatibility Student",
+    "name_jp": "相性・担当生徒"
   },
   {
-    "name_en": "Teacher List / Teacher Shift",
-    "name_jp": "講師一覧 / 講師シフト"
+    "name_en": "Salary Increase",
+    "name_jp": "昇給履歴"
+  },
+  {
+    "name_en": "Teacher Shift",
+    "name_jp": "講師シフト"
   },
   {
     "name_en": "Teaching Report",
     "name_jp": "指導報告書"
   },
   {
-    "name_en": "Mobile - Create / Edit Teaching Report Management",
-    "name_jp": "モバイル - 作成・編集管理"
+    "name_en": "Mobile - Create",
+    "name_jp": "作成・編集管理"
   },
   {
-    "name_en": "Mobile - Teaching Records",
-    "name_jp": "モバイル - 指導記録"
+    "name_en": "Edit Teaching Report Management",
+    "name_jp": "作成・編集管理"
   },
   {
-    "name_en": "Mobile - Teaching Report",
-    "name_jp": "モバイル - 指導報告書"
+    "name_en": "Teaching Records",
+    "name_jp": "指導記録"
+  },
+  {
+    "name_en": "Teaching Report",
+    "name_jp": "指導報告書"
   },
   {
     "name_en": "Testing",

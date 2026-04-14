@@ -8,6 +8,7 @@ import { WebhooksModule } from './modules/webhooks/webhooks.module';
 import { BullModule } from '@nestjs/bullmq';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module';
+import { IssueModule } from './modules/issue/issue.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { AuthModule } from './modules/auth/auth.module';
     ScheduleModule.forRoot(),
     HealthModule,
     AuthModule,
+    IssueModule,
     WebhooksModule
   ]
 })

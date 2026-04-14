@@ -1,6 +1,7 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { AppBaseEntity } from './base.entity';
-
+import { IssueEntity } from './issue.entity';
+  
 @Entity({ name: 'users' })
 export class UserEntity extends AppBaseEntity {
   @Column({ type: 'int', unique: true })
@@ -17,4 +18,7 @@ export class UserEntity extends AppBaseEntity {
 
   @Column({ type: 'varchar', length: 255, select: false })
   password: string;
+
+  @OneToMany(() => IssueEntity, (issue) => issue.assignedTo)
+  issues: IssueEntity[]; 
 }
