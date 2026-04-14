@@ -1,17 +1,19 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
+import * as fs from 'fs';
+import * as path from 'path';
 import { env } from '../../configs/env.config';
 import { GeminiService } from './gemini.service';
 
 @Injectable()
 export abstract class GitlabIssueService {
-  abstract createIssue(title: string, description: string): Promise<unknown>;
+  abstract createIssue(title: string, description: string, labels?: string[]): Promise<unknown>;
   abstract createIssueFromWebhook(payload: unknown): Promise<unknown>;
 }
 
 abstract class BaseGitlabService extends GitlabIssueService {
-  private readonly logger = new Logger(BaseGitlabService.name);
+  protected readonly logger = new Logger(BaseGitlabService.name);
   private readonly gitlabUrl = env.gitlab.apiUrl;
   private readonly apiToken = env.gitlab.apiToken;
 
@@ -27,7 +29,7 @@ abstract class BaseGitlabService extends GitlabIssueService {
     return this.createIssue(title, description);
   }
 
-  async createIssue(title: string, description: string): Promise<unknown> {
+  async createIssue(title: string, description: string, labels: string[] = []): Promise<unknown> {
     const projectId = this.getProjectId();
     if (!this.apiToken || !projectId) {
       this.logger.error('Missing GITLAB_API_TOKEN or project id');
@@ -43,7 +45,7 @@ abstract class BaseGitlabService extends GitlabIssueService {
           {
             title,
             description,
-            labels: 'webhook,google-sheets'
+            labels: ['webhook', 'google-sheets', ...labels].join(',')
           },
           {
             headers: {
@@ -62,6 +64,8 @@ abstract class BaseGitlabService extends GitlabIssueService {
 
 @Injectable()
 export class SakuraGitlabService extends BaseGitlabService {
+  private readonly labelMap = this.buildLabelMap();
+
   constructor(httpService: HttpService, private readonly geminiService: GeminiService) {
     super(httpService);
   }
@@ -84,38 +88,25 @@ export class SakuraGitlabService extends BaseGitlabService {
       return this.createIssue(fallbackTitle, fallbackDescription);
     }
 
-    const targetIndexes = [3, 4, 5, 9, 10, 12];
-    const rawTexts = targetIndexes.map((index) => row[index]);
-    const textsToTranslate = rawTexts.filter(
-      (value): value is string => typeof value === 'string' && value.trim().length > 0
-    );
-    const translatedValues = await this.geminiService.translateBatch(textsToTranslate);
-
-    let translatedCursor = 0;
-    const translatedByIndex = rawTexts.map((value) => {
-      if (typeof value === 'string' && value.trim().length > 0) {
-        const translated = translatedValues[translatedCursor] || value;
-        translatedCursor += 1;
-        return translated;
-      }
-      return '';
-    });
-
-    const [status = '', priority = '', type = '', bigCategory = '', smallCategory = '', issueDescriptionText = ''] =
-      translatedByIndex;
-    const ticketNo = String(row[2] ?? '').trim();
+    const status = this.mapLabel(row[3]);
+    const priority = this.mapLabel(row[4]);
+    const type = this.mapLabel(row[5]);
+    const bigCategory = this.mapLabel(row[9]);
+    const smallCategory = this.mapLabel(row[10]);
     const customerText = String(row[12] ?? '').trim();
+    const issueDescriptionText = customerText ? await this.geminiService.translateText(customerText) : '';
+    const ticketNo = String(row[2] ?? '').trim();
     const shortTitle = await this.geminiService.summarizeVietnameseTitle(issueDescriptionText, 10);
     const issueTitle = `[UAT] No.${ticketNo} ${bigCategory}/${smallCategory}: ${shortTitle}`.trim();
+    const issueLabels = [status, priority, type, bigCategory, smallCategory]
+      .filter((value) => value.length > 0);
 
     const issueBody = [
-      `Khach: ${customerText}`,
-      `Dich: ${issueDescriptionText}`
+      `Khách: ${customerText}`,
+      `Dịch: ${issueDescriptionText}`
     ].join('\n');
 
-    const createIssueData = this.createIssue(issueTitle, issueBody);
-
-    // connect to teams
+    return this.createIssue(issueTitle, issueBody, issueLabels);
   }
 
   private extractRow(payload: unknown): unknown[] {
@@ -132,5 +123,40 @@ export class SakuraGitlabService extends BaseGitlabService {
     }
 
     return [];
+  }
+
+  private buildLabelMap(): Map<string, string> {
+    const map = new Map<string, string>();
+    const labelsPath = path.join(process.cwd(), 'src', 'language', 'labels.json');
+
+    try {
+      const raw = fs.readFileSync(labelsPath, 'utf8');
+      const labels = JSON.parse(raw) as Array<{ name_en?: string; name_jp?: string }>;
+      for (const item of labels) {
+        const en = String(item.name_en ?? '').trim();
+        const jp = String(item.name_jp ?? '').trim();
+        if (!en) {
+          continue;
+        }
+        if (jp && !map.has(jp)) {
+          map.set(jp, en);
+        }
+        if (!map.has(en)) {
+          map.set(en, en);
+        }
+      }
+    } catch (error) {
+      this.logger.warn(`Cannot load labels mapping: ${String(error)}`);
+    }
+
+    return map;
+  }
+
+  private mapLabel(rawValue: unknown): string {
+    const text = String(rawValue ?? '').trim();
+    if (!text) {
+      return '';
+    }
+    return this.labelMap.get(text) || text;
   }
 }

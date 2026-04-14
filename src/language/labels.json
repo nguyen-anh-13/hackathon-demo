@@ -1,602 +1,510 @@
 [
   {
-    "id": 662,
-    "name_en": "Attendance Management / Attendance Management",
-    "name_jp": "勤怠管理 / 出欠管理"
+    "name_en": "Attendance Management",
+    "name_jp": "勤怠管理"
   },
   {
-    "id": 663,
-    "name_en": "Attendance Management / Mobile - Attendance History",
-    "name_jp": "勤怠管理 / モバイル - 出欠履歴"
+    "name_en": "Attendance Management",
+    "name_jp": "出欠管理"
   },
   {
-    "id": 664,
-    "name_en": "Attendance Management / Mobile - Attendance QR Code",
-    "name_jp": "勤怠管理 / モバイル - 出欠QRコード"
+    "name_en": "Mobile - Attendance History",
+    "name_jp": "モバイル - 出欠履歴"
   },
   {
-    "id": 665,
-    "name_en": "Billing / Billing Closing Process",
-    "name_jp": "請求 / 請求締め処理"
+    "name_en": "Mobile - Attendance QR Code",
+    "name_jp": "モバイル - 出欠QRコード"
   },
   {
-    "id": 666,
-    "name_en": "Billing / Billing List",
-    "name_jp": "請求 / 請求一覧"
+    "name_en": "Billing",
+    "name_jp": "請求"
   },
   {
-    "id": 667,
-    "name_en": "Billing / Mobile - Billing Details",
-    "name_jp": "請求 / モバイル - 請求詳細"
+    "name_en": "Billing Closing Process",
+    "name_jp": "請求締め処理"
   },
   {
-    "id": 668,
-    "name_en": "Billing / Mobile - Billing Management",
-    "name_jp": "請求 / モバイル - 請求管理"
+    "name_en": "Billing List",
+    "name_jp": "請求一覧"
   },
   {
-    "id": 670,
-    "name_en": "Billing / Sale List",
-    "name_jp": "請求 / 売上一覧"
+    "name_en": "Mobile - Billing Details",
+    "name_jp": "モバイル - 請求詳細"
   },
   {
-    "id": 672,
-    "name_en": "Billing / Test Exam",
-    "name_jp": "請求 / 試験・テスト"
+    "name_en": "Mobile - Billing Management",
+    "name_jp": "モバイル - 請求管理"
   },
   {
-    "id": 673,
-    "name_en": "Billing / Unpaid List",
-    "name_jp": "請求 / 未払い一覧"
+    "name_en": "Sale List",
+    "name_jp": "売上一覧"
   },
   {
-    "id": 674,
-    "name_en": "Billing / Video Class Request List",
-    "name_jp": "請求 / ビデオクラスリクエスト一覧"
+    "name_en": "Test Exam",
+    "name_jp": "試験・テスト"
   },
   {
-    "id": 605,
+    "name_en": "Unpaid List",
+    "name_jp": "未払い一覧"
+  },
+  {
+    "name_en": "Video Class Request List",
+    "name_jp": "ビデオクラスリクエスト一覧"
+  },
+  {
     "name_en": "Bug",
     "name_jp": "バグ"
   },
   {
-    "id": 599,
     "name_en": "Change Request",
     "name_jp": "仕様変更"
   },
   {
-    "id": 675,
-    "name_en": "Chat / Mobile - Chat",
-    "name_jp": "チャット / モバイル - チャット"
+    "name_en": "Chat",
+    "name_jp": "チャット"
   },
   {
-    "id": 676,
-    "name_en": "Chat / Open",
-    "name_jp": "チャット / オープン"
+    "name_en": "Mobile - Chat",
+    "name_jp": "モバイル - チャット"
   },
   {
-    "id": 677,
-    "name_en": "Class / Automatic Seat Assignment",
-    "name_jp": "クラス / 座席自動割当"
+    "name_en": "Open",
+    "name_jp": "オープン"
   },
   {
-    "id": 678,
-    "name_en": "Class / Calendar",
-    "name_jp": "クラス / カレンダー"
+    "name_en": "Class",
+    "name_jp": "クラス"
   },
   {
-    "id": 679,
-    "name_en": "Class / Calendar / Class Seating Chart",
-    "name_jp": "クラス / カレンダー / クラス座席表"
+    "name_en": "Automatic Seat Assignment",
+    "name_jp": "座席自動割当"
   },
   {
-    "id": 680,
-    "name_en": "Class / Calendar / Weekly Seating Chart",
-    "name_jp": "クラス / カレンダー / 週間座席表"
+    "name_en": "Calendar",
+    "name_jp": "カレンダー"
   },
   {
-    "id": 681,
-    "name_en": "Class / Exporting Student Schedule",
-    "name_jp": "クラス / 生徒スケジュール出力"
+    "name_en": "Calendar / Class Seating Chart",
+    "name_jp": "カレンダー / クラス座席表"
   },
   {
-    "id": 682,
-    "name_en": "Class / Rescheduled Classes",
-    "name_jp": "クラス / 振替授業"
+    "name_en": "Calendar / Weekly Seating Chart",
+    "name_jp": "カレンダー / 週間座席表"
   },
   {
-    "id": 683,
-    "name_en": "Class / Schedule Confirmation",
-    "name_jp": "クラス / スケジュール確認"
+    "name_en": "Exporting Student Schedule",
+    "name_jp": "生徒スケジュール出力"
   },
   {
-    "id": 684,
-    "name_en": "Class / Shift-Determination & Notification",
-    "name_jp": "クラス / シフト確定・通知"
+    "name_en": "Rescheduled Classes",
+    "name_jp": "振替授業"
   },
   {
-    "id": 685,
-    "name_en": "Class / Teacher's Shift Request",
-    "name_jp": "クラス / 講師シフト希望"
+    "name_en": "Schedule Confirmation",
+    "name_jp": "スケジュール確認"
   },
   {
-    "id": 686,
-    "name_en": "Classroom / Classroom List",
-    "name_jp": "教室 / 教室一覧"
+    "name_en": "Shift-Determination & Notification",
+    "name_jp": "シフト確定・通知"
   },
   {
-    "id": 687,
-    "name_en": "Classroom / Classroom List / Information",
-    "name_jp": "教室 / 教室一覧 / 基本情報"
+    "name_en": "Teacher's Shift Request",
+    "name_jp": "講師シフト希望"
   },
   {
-    "id": 688,
-    "name_en": "Classroom / Classroom List / Room",
-    "name_jp": "教室 / 教室一覧 / 教室"
+    "name_en": "Classroom",
+    "name_jp": "教室"
   },
   {
-    "id": 689,
-    "name_en": "Classroom / Classroom List / Schedule",
-    "name_jp": "教室 / 教室一覧 / スケジュール"
+    "name_en": "Classroom List",
+    "name_jp": "教室一覧"
   },
   {
-    "id": 690,
-    "name_en": "Classroom / Classroom List / Timetable",
-    "name_jp": "教室 / 教室一覧 / 時間割"
+    "name_en": "Classroom List / Information",
+    "name_jp": "教室一覧 / 基本情報"
   },
   {
-    "id": 732,
+    "name_en": "Classroom List / Room",
+    "name_jp": "教室一覧 / 教室"
+  },
+  {
+    "name_en": "Classroom List / Schedule",
+    "name_jp": "教室一覧 / スケジュール"
+  },
+  {
+    "name_en": "Classroom List / Timetable",
+    "name_jp": "教室一覧 / 時間割"
+  },
+  {
     "name_en": "Confirming",
     "name_jp": "確認中"
   },
   {
-    "id": 692,
-    "name_en": "Dashboard / Dashboard",
-    "name_jp": "ダッシュボード / ダッシュボード"
+    "name_en": "Dashboard",
+    "name_jp": "ダッシュボード"
   },
   {
-    "id": 693,
-    "name_en": "Dashboard / Mobile - Home",
-    "name_jp": "ダッシュボード / モバイル - ホーム"
+    "name_en": "Mobile - Home",
+    "name_jp": "モバイル - ホーム"
   },
   {
-    "id": 798,
     "name_en": "FEEDBACK DONE",
     "name_jp": "フィードバック完了"
   },
   {
-    "id": 694,
     "name_en": "General",
     "name_jp": "共通 / 全般"
   },
   {
-    "id": 695,
-    "name_en": "Grade Management / Enter Entrance Exam Results",
-    "name_jp": "成績管理 / 入試結果入力"
+    "name_en": "Grade Management",
+    "name_jp": "成績管理"
   },
   {
-    "id": 696,
-    "name_en": "Grade Management / Enter Regular Exam Results",
-    "name_jp": "成績管理 / 定期テスト結果入力"
+    "name_en": "Enter Entrance Exam Results",
+    "name_jp": "入試結果入力"
   },
   {
-    "id": 697,
-    "name_en": "Grade Management / Entrance Exam Results",
-    "name_jp": "成績管理 / 入試結果一覧"
+    "name_en": "Enter Regular Exam Results",
+    "name_jp": "定期テスト結果入力"
   },
   {
-    "id": 698,
-    "name_en": "Grade Management / Entrance Exams",
-    "name_jp": "成績管理 / 入試設定"
+    "name_en": "Entrance Exam Results",
+    "name_jp": "入試結果一覧"
   },
   {
-    "id": 699,
-    "name_en": "Grade Management / Regular Exam Results",
-    "name_jp": "成績管理 / 定期テスト結果一覧"
+    "name_en": "Entrance Exams",
+    "name_jp": "入試設定"
   },
   {
-    "id": 700,
-    "name_en": "Grade Management / Regular Exams",
-    "name_jp": "成績管理 / 定期テスト設定"
+    "name_en": "Regular Exam Results",
+    "name_jp": "定期テスト結果一覧"
   },
   {
-    "id": 701,
-    "name_en": "Grade Management/Academic Year & Term",
-    "name_jp": "成績管理 / 年度・学期"
+    "name_en": "Regular Exams",
+    "name_jp": "定期テスト設定"
   },
   {
-    "id": 702,
-    "name_en": "Grade Management/Exam Schools",
-    "name_jp": "成績管理 / 受験校"
+    "name_en": "Academic Year & Term",
+    "name_jp": "年度・学期"
   },
   {
-    "id": 602,
+    "name_en": "Exam Schools",
+    "name_jp": "受験校"
+  },
+  {
     "name_en": "High",
     "name_jp": "高"
   },
   {
-    "id": 606,
     "name_en": "Improvement",
     "name_jp": "改善"
   },
   {
-    "id": 596,
     "name_en": "In Progress",
     "name_jp": "進行中"
   },
   {
-    "id": 703,
     "name_en": "Language",
     "name_jp": "言語設定"
   },
   {
-    "id": 704,
-    "name_en": "Login / Login",
-    "name_jp": "ログイン / ログイン"
+    "name_en": "Login",
+    "name_jp": "ログイン"
   },
   {
-    "id": 705,
-    "name_en": "Login / Reset Password / Enter Email",
-    "name_jp": "ログイン / パスワード再設定 / メールアドレス入力"
+    "name_en": "Reset Password / Enter Email",
+    "name_jp": "パスワード再設定 / メールアドレス入力"
   },
   {
-    "id": 706,
-    "name_en": "Login / Reset Password / Reset Password Enter Passwords",
-    "name_jp": "ログイン / パスワード再設定 / 新パスワード入力"
+    "name_en": "Reset Password / Reset Password Enter Passwords",
+    "name_jp": "パスワード再設定 / 新パスワード入力"
   },
   {
-    "id": 707,
-    "name_en": "Login / Reset Password / Reset Password Uploaded Successfully",
-    "name_jp": "ログイン / パスワード再設定 / 完了"
+    "name_en": "Reset Password / Reset Password Uploaded Successfully",
+    "name_jp": "パスワード再設定 / 完了"
   },
   {
-    "id": 708,
-    "name_en": "Login / Reset Password / Verify OTP",
-    "name_jp": "ログイン / パスワード再設定 / OTP認証"
+    "name_en": "Reset Password / Verify OTP",
+    "name_jp": "パスワード再設定 / OTP認証"
   },
   {
-    "id": 604,
     "name_en": "Low",
     "name_jp": "低"
   },
   {
-    "id": 603,
     "name_en": "Medium",
     "name_jp": "中"
   },
   {
-    "id": 709,
     "name_en": "Mobile - Correspondence History",
     "name_jp": "モバイル - 対応履歴"
   },
   {
-    "id": 710,
-    "name_en": "Mobile - Profile / Change Password",
-    "name_jp": "モバイル - プロフィール / パスワード変更"
+    "name_en": "Mobile - Profile",
+    "name_jp": "モバイル - プロフィール"
   },
   {
-    "id": 711,
-    "name_en": "Mobile - Profile / FAQ",
-    "name_jp": "モバイル - プロフィール / FAQ"
+    "name_en": "Change Password",
+    "name_jp": "パスワード変更"
   },
   {
-    "id": 712,
-    "name_en": "Mobile - Profile / Instructor Combination",
-    "name_jp": "モバイル - プロフィール / 講師組合せ"
+    "name_en": "FAQ",
+    "name_jp": "FAQ"
   },
   {
-    "id": 713,
-    "name_en": "Mobile - Profile / Notification Settings",
-    "name_jp": "モバイル - プロフィール / 通知設定"
+    "name_en": "Instructor Combination",
+    "name_jp": "講師組合せ"
   },
   {
-    "id": 714,
-    "name_en": "Mobile - Profile / Personalize Home",
-    "name_jp": "モバイル - プロフィール / ホームパーソナライズ"
+    "name_en": "Notification Settings",
+    "name_jp": "通知設定"
   },
   {
-    "id": 715,
-    "name_en": "Mobile - Profile / Student Combination",
-    "name_jp": "モバイル - プロフィール / 生徒組合せ"
+    "name_en": "Personalize Home",
+    "name_jp": "ホームパーソナライズ"
   },
   {
-    "id": 662,
-    "name_en": "Attendance Management / Attendance Management",
-    "name_jp": "勤怠管理 / 出欠管理"
+    "name_en": "Student Combination",
+    "name_jp": "生徒組合せ"
   },
   {
-    "id": 663,
-    "name_en": "Attendance Management / Mobile - Attendance History",
-    "name_jp": "勤怠管理 / モバイル - 出欠履歴"
+    "name_en": "Test Exam",
+    "name_jp": "試験・テスト代"
   },
   {
-    "id": 664,
-    "name_en": "Attendance Management / Mobile - Attendance QR Code",
-    "name_jp": "勤怠管理 / モバイル - 出欠QRコード"
+    "name_en": "Video Class Request List",
+    "name_jp": "映像授業リクエスト一覧"
   },
   {
-    "id": 665,
-    "name_en": "Billing / Billing Closing Process",
-    "name_jp": "請求 / 請求締め処理"
+    "name_en": "Student",
+    "name_jp": "生徒"
   },
   {
-    "id": 666,
-    "name_en": "Billing / Billing List",
-    "name_jp": "請求 / 請求一覧"
+    "name_en": "Seasonal Interview",
+    "name_jp": "季節面談"
   },
   {
-    "id": 667,
-    "name_en": "Billing / Mobile - Billing Details",
-    "name_jp": "請求 / モバイル - 請求詳細"
+    "name_en": "Short Term List",
+    "name_jp": "短期生一覧"
   },
   {
-    "id": 668,
-    "name_en": "Billing / Mobile - Billing Management",
-    "name_jp": "請求 / モバイル - 請求管理"
+    "name_en": "Student List",
+    "name_jp": "生徒一覧"
   },
   {
-    "id": 670,
-    "name_en": "Billing / Sale List",
-    "name_jp": "請求 / 売上一覧"
+    "name_en": "Student List / Bank Account",
+    "name_jp": "生徒一覧 / 銀行口座"
   },
   {
-    "id": 672,
-    "name_en": "Billing / Test Exam",
-    "name_jp": "請求 / 試験・テスト代"
+    "name_en": "Student List / Basic Information",
+    "name_jp": "生徒一覧 / 基本情報"
   },
   {
-    "id": 673,
-    "name_en": "Billing / Unpaid List",
-    "name_jp": "請求 / 未払い一覧"
+    "name_en": "Student List / Billing",
+    "name_jp": "生徒一覧 / 請求情報"
   },
   {
-    "id": 674,
-    "name_en": "Billing / Video Class Request List",
-    "name_jp": "請求 / 映像授業リクエスト一覧"
+    "name_en": "Student List / Compatibility Teacher",
+    "name_jp": "生徒一覧 / 相性・担当講師"
   },
   {
-    "id": 605,
-    "name_en": "Bug",
-    "name_jp": "バグ"
+    "name_en": "Student List / Correspondence History",
+    "name_jp": "生徒一覧 / 対応履歴"
   },
   {
-    "id": 599,
-    "name_en": "Change Request",
-    "name_jp": "仕様変更"
+    "name_en": "Student List / Notes",
+    "name_jp": "生徒一覧 / 備考・メモ"
   },
   {
-    "id": 675,
-    "name_en": "Chat / Mobile - Chat",
-    "name_jp": "チャット / モバイル - チャット"
+    "name_en": "Student List / Regular Class",
+    "name_jp": "生徒一覧 / 通常授業"
   },
   {
-    "id": 676,
-    "name_en": "Chat / Open",
-    "name_jp": "チャット / オープン"
+    "name_en": "Student List / Sales History",
+    "name_jp": "生徒一覧 / 販売履歴"
   },
   {
-    "id": 677,
-    "name_en": "Class / Automatic Seat Assignment",
-    "name_jp": "クラス / 座席自動割当"
+    "name_en": "Student List / Student Schedule",
+    "name_jp": "生徒一覧 / 生徒スケジュール"
   },
   {
-    "id": 678,
-    "name_en": "Class / Calendar",
-    "name_jp": "クラス / カレンダー"
+    "name_en": "Withdrawal List",
+    "name_jp": "退塾生一覧"
   },
   {
-    "id": 679,
-    "name_en": "Class / Calendar / Class Seating Chart",
-    "name_jp": "クラス / カレンダー / クラス座席表"
+    "name_en": "Mobile / Schedule",
+    "name_jp": "モバイル / スケジュール"
   },
   {
-    "id": 680,
-    "name_en": "Class / Calendar / Weekly Seating Chart",
-    "name_jp": "クラス / カレンダー / 週間座席表"
+    "name_en": "Support Ticket",
+    "name_jp": "サポートチケット"
   },
   {
-    "id": 681,
-    "name_en": "Class / Exporting Student Schedule",
-    "name_jp": "クラス / 生徒スケジュール出力"
+    "name_en": "Support Ticket",
+    "name_jp": "お問い合わせ"
   },
   {
-    "id": 734,
-    "name_en": "Student / Seasonal Interview",
-    "name_jp": "生徒 / 季節面談"
+    "name_en": "System",
+    "name_jp": "システム"
   },
   {
-    "id": 735,
-    "name_en": "Student / Short Term List",
-    "name_jp": "生徒 / 短期生一覧"
+    "name_en": "Bulk Information Download",
+    "name_jp": "情報一括ダウンロード"
   },
   {
-    "id": 736,
-    "name_en": "Student / Student List",
-    "name_jp": "生徒 / 生徒一覧"
+    "name_en": "Communication / CSV Import History",
+    "name_jp": "通信 / CSVインポート履歴"
   },
   {
-    "id": 737,
-    "name_en": "Student / Student List / Bank Account",
-    "name_jp": "生徒 / 生徒一覧 / 銀行口座"
+    "name_en": "Communication / Notification",
+    "name_jp": "通信 / 通知設定"
   },
   {
-    "id": 738,
-    "name_en": "Student / Student List / Basic Information",
-    "name_jp": "生徒 / 生徒一覧 / 基本情報"
+    "name_en": "Communication / Target Group",
+    "name_jp": "通信 / 配信対象グループ"
   },
   {
-    "id": 739,
-    "name_en": "Student / Student List / Billing",
-    "name_jp": "生徒 / 生徒一覧 / 請求情報"
+    "name_en": "Communication / Teaching Report Setting",
+    "name_jp": "通信 / 指導報告書設定"
   },
   {
-    "id": 740,
-    "name_en": "Student / Student List / Compatibility Teacher",
-    "name_jp": "生徒 / 生徒一覧 / 相性・担当講師"
+    "name_en": "Organization / Area",
+    "name_jp": "組織 / エリア"
   },
   {
-    "id": 741,
-    "name_en": "Student / Student List / Correspondence History",
-    "name_jp": "生徒 / 生徒一覧 / 対応履歴"
+    "name_en": "Organization / Bank",
+    "name_jp": "組織 / 銀行"
   },
   {
-    "id": 742,
-    "name_en": "Student / Student List / Notes",
-    "name_jp": "生徒 / 生徒一覧 / 備考・メモ"
+    "name_en": "Organization / Classroom",
+    "name_jp": "組織 / 教室"
   },
   {
-    "id": 743,
-    "name_en": "Student / Student List / Regular Class",
-    "name_jp": "生徒 / 生徒一覧 / 通常授業"
+    "name_en": "Organization / Region",
+    "name_jp": "組織 / リージョン"
   },
   {
-    "id": 744,
-    "name_en": "Student / Student List / Sales History",
-    "name_jp": "生徒 / 生徒一覧 / 販売履歴"
+    "name_en": "Organization / User List",
+    "name_jp": "組織 / ユーザー一覧"
   },
   {
-    "id": 745,
-    "name_en": "Student / Student List / Student Schedule",
-    "name_jp": "生徒 / 生徒一覧 / 生徒スケジュール"
+    "name_en": "Report / Ad Media",
+    "name_jp": "レポート / 広告媒体"
   },
   {
-    "id": 746,
-    "name_en": "Student / Withdrawal List",
-    "name_jp": "生徒 / 退塾生一覧"
+    "name_en": "Student / Billing Expense Item",
+    "name_jp": "生徒 / 請求費目"
   },
   {
-    "id": 747,
-    "name_en": "Student/Mobile/Schedule",
-    "name_jp": "生徒 / モバイル / スケジュール"
+    "name_en": "Student / Discount Privileges",
+    "name_jp": "生徒 / 割引・特典"
   },
   {
-    "id": 748,
-    "name_en": "Support Ticket / Support Ticket",
-    "name_jp": "サポートチケット / お問い合わせ"
+    "name_en": "Student / Exercise Books",
+    "name_jp": "生徒 / ワーク・教材"
   },
   {
-    "id": 749,
-    "name_en": "System / Bulk Information Download",
-    "name_jp": "システム / 情報一括ダウンロード"
+    "name_en": "Student / Privileges",
+    "name_jp": "生徒 / 特典設定"
   },
   {
-    "id": 750,
-    "name_en": "System / Communication / CSV Import History",
-    "name_jp": "システム / 通信 / CSVインポート履歴"
+    "name_en": "Student / Reasons For Withdrawal",
+    "name_jp": "生徒 / 退塾 lý do (退会理由)"
   },
   {
-    "id": 751,
-    "name_en": "System / Communication / Notification",
-    "name_jp": "システム / 通信 / 通知設定"
+    "name_en": "Student / Regular Course",
+    "name_jp": "生徒 / 通常コース"
   },
   {
-    "id": 752,
-    "name_en": "System / Communication / Target Group",
-    "name_jp": "システム / 通信 / 配信対象グループ"
+    "name_en": "Student / School",
+    "name_jp": "生徒 / 学校"
   },
   {
-    "id": 753,
-    "name_en": "System / Communication / Teaching Report Setting",
-    "name_jp": "システム / 通信 / 指導報告書設定"
+    "name_en": "Student / Subject",
+    "name_jp": "生徒 / 科目"
   },
   {
-    "id": 754,
-    "name_en": "System / Organization / Area",
-    "name_jp": "システム / 組織 / エリア"
+    "name_en": "Student / Training Course",
+    "name_jp": "生徒 / 講習コース"
   },
   {
-    "id": 755,
-    "name_en": "System / Organization / Bank",
-    "name_jp": "システム / 組織 / 銀行"
+    "name_en": "Teacher / Raise Base Wage",
+    "name_jp": "講師 / 基本給昇給"
   },
   {
-    "id": 756,
-    "name_en": "System / Organization / Classroom",
-    "name_jp": "システム / 組織 / 教室"
+    "name_en": "Teacher / Raise Wage Rules",
+    "name_jp": "講師 / 昇給ルール"
   },
   {
-    "id": 757,
-    "name_en": "System / Organization / Region",
-    "name_jp": "システム / 組織 / リージョン"
+    "name_en": "Teacher",
+    "name_jp": "講師"
   },
   {
-    "id": 758,
-    "name_en": "System / Organization / User List",
-    "name_jp": "システム / 組織 / ユーザー一覧"
+    "name_en": "Mobile / Basic Information",
+    "name_jp": "モバイル / 基本情報"
   },
   {
-    "id": 759,
-    "name_en": "System / Report / Ad Media",
-    "name_jp": "システム / レポート / 広告媒体"
+    "name_en": "Mobile / Salary",
+    "name_jp": "モバイル / 給与明細"
   },
   {
-    "id": 760,
-    "name_en": "System / Student / Billing Expense Item",
-    "name_jp": "システム / 生徒 / 請求費目"
+    "name_en": "Mobile / Shift Request",
+    "name_jp": "モバイル / シフト希望"
   },
   {
-    "id": 761,
-    "name_en": "System / Student / Discount Privileges",
-    "name_jp": "システム / 生徒 / 割引・特典"
+    "name_en": "Teacher List",
+    "name_jp": "講師一覧"
   },
   {
-    "id": 762,
-    "name_en": "System / Student / Exercise Books",
-    "name_jp": "システム / 生徒 / ワーク・教材"
+    "name_en": "Teacher List / Bank Account",
+    "name_jp": "講師一覧 / 銀行口座"
   },
   {
-    "id": 763,
-    "name_en": "System / Student / Privileges",
-    "name_jp": "システム / 生徒 / 特典設定"
+    "name_en": "Teacher List / Basic Information",
+    "name_jp": "講師一覧 / 基本情報"
   },
   {
-    "id": 764,
-    "name_en": "System / Student / Reasons For Withdrawal",
-    "name_jp": "システム / 生徒 / 退塾 lý do (退会理由)"
+    "name_en": "Teacher List / Class",
+    "name_jp": "講師一覧 / 担当クラス"
   },
   {
-    "id": 765,
-    "name_en": "System / Student / Regular Course",
-    "name_jp": "システム / 生徒 / 通常コース"
+    "name_en": "Teacher List / Compatibility Student",
+    "name_jp": "講師一覧 / 相性・担当生徒"
   },
   {
-    "id": 766,
-    "name_en": "System / Student / School",
-    "name_jp": "システム / 生徒 / 学校"
+    "name_en": "Teacher List / Salary Increase",
+    "name_jp": "講師一覧 / 昇給履歴"
   },
   {
-    "id": 767,
-    "name_en": "System / Student / Subject",
-    "name_jp": "システム / 生徒 / 科目"
+    "name_en": "Teacher List / Teacher Shift",
+    "name_jp": "講師一覧 / 講師シフト"
   },
   {
-    "id": 768,
-    "name_en": "System / Student / Training Course",
-    "name_jp": "システム / 生徒 / 講習コース"
+    "name_en": "Teaching Report",
+    "name_jp": "指導報告書"
   },
   {
-    "id": 769,
-    "name_en": "System / Teacher / Raise Base Wage",
-    "name_jp": "システム / 講師 / 基本給昇給"
+    "name_en": "Mobile - Create / Edit Teaching Report Management",
+    "name_jp": "モバイル - 作成・編集管理"
   },
   {
-    "id": 770,
-    "name_en": "System / Teacher / Raise Wage Rules",
-    "name_jp": "システム / 講師 / 昇給ルール"
+    "name_en": "Mobile - Teaching Records",
+    "name_jp": "モバイル - 指導記録"
   },
   {
-    "id": 771,
-    "name_en": "Teacher / Mobile / Basic Information",
-    "name_jp": "講師 / モバイル / 基本情報"
+    "name_en": "Mobile - Teaching Report",
+    "name_jp": "モバイル - 指導報告書"
   },
   {
-    "id": 772,
-    "name_en": "Teacher / Mobile / Salary",
-    "name_jp": "講師 / モバイル / 給与明細"
+    "name_en": "Testing",
+    "name_jp": "テスト中"
   },
   {
-    "id": 773,
-    "name_en": "Teacher / Mobile / Schedule",
-    "name_jp": "講師 / モバイル / スケジュール"
+    "name_en": "To Do",
+    "name_jp": "新規"
+  },
+  {
+    "name_en": "To Do",
+    "name_jp": "リオープン"
   }
 ]

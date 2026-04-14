@@ -12,35 +12,30 @@ export class GeminiService {
     this.client = env.gemini.apiKey ? new GoogleGenerativeAI(env.gemini.apiKey) : null;
   }
 
-  async translateBatch(texts: string[]): Promise<string[]> {
-    if (!texts.length) {
-      return [];
+  async translateText(text: string): Promise<string> {
+    const input = text.trim();
+    if (!input) {
+      return '';
     }
     if (!this.client) {
-      this.logger.warn('Missing GEMINI_API_KEY, fallback to original texts');
-      return texts;
+      this.logger.warn('Missing GEMINI_API_KEY, fallback to original text');
+      return text;
     }
 
     const model = this.client.getGenerativeModel({ model: this.modelName });
     const prompt = [
-      'Translate the following Japanese texts into Vietnamese.',
-      'Return ONLY a JSON array of translated strings in the same order.',
-      'Do not include markdown, explanation, or extra keys.',
+      'Translate the following Japanese text into Vietnamese.',
+      'Return ONLY translated text, no markdown, no explanation.',
       '',
-      JSON.stringify(texts)
+      input
     ].join('\n');
 
     try {
       const result = await model.generateContent(prompt);
-      const raw = result.response.text().trim();
-      const parsed = JSON.parse(raw) as unknown;
-      if (!Array.isArray(parsed)) {
-        throw new Error('Gemini response is not array');
-      }
-      return parsed.map((item, index) => (typeof item === 'string' && item.trim() ? item : texts[index]));
+      return result.response.text().trim() || text;
     } catch (error: any) {
       this.logger.error(`Gemini translate failed: ${error?.message || error}`);
-      return texts;
+      return text;
     }
   }
 
