@@ -9,6 +9,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module';
 import { IssueModule } from './modules/issue/issue.module';
+import { ProjectModule } from './modules/project/project.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { IssueModule } from './modules/issue/issue.module';
     HealthModule,
     AuthModule,
     IssueModule,
+    ProjectModule,
     WebhooksModule
   ]
 })
