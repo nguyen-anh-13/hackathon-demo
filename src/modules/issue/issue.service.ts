@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Queue } from 'bullmq';
@@ -6,8 +6,9 @@ import { Repository } from 'typeorm';
 import { IssueEntity } from '../../entities/issue.entity';
 import { UserEntity } from '../../entities/user.entity';
 import { CREATE_GITLAB_ISSUE_FROM_ISSUE_JOB, GITLAB_TICKET_QUEUE } from '../webhooks/webhooks.constants';
-import { GetIssuesQueryDto } from './dto/get-issues-query.dto';
+import { IssueFilterDto } from './dto/get-issues-query.dto';
 import { IssueListResponseDto } from './dto/issue-list-response.dto';
+import { UpdateIssueDto } from './dto/update-issue.dto';
 
 @Injectable()
 export class IssueService {
@@ -20,7 +21,7 @@ export class IssueService {
     private readonly gitlabTicketQueue: Queue
   ) {}
 
-  async getAll(query: GetIssuesQueryDto): Promise<IssueListResponseDto> {
+  async getAll(query: IssueFilterDto): Promise<IssueListResponseDto> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
 
@@ -33,6 +34,12 @@ export class IssueService {
 
     if (query.status) {
       queryBuilder.andWhere('LOWER(issue.status) LIKE LOWER(:status)', { status: `%${query.status}%` });
+    }
+
+    if (query.project_id != null) {
+      queryBuilder
+        .innerJoin('issue.project', 'project')
+        .andWhere('project.project_id = :project_id', { project_id: query.project_id });
     }
 
     const [data, total] = await queryBuilder.getManyAndCount();
@@ -57,6 +64,29 @@ export class IssueService {
     }
 
     return issue;
+  }
+
+  async updateIssue(id: number, dto: UpdateIssueDto): Promise<IssueEntity> {
+    if (dto.title === undefined && dto.translatedContent === undefined) {
+      throw new BadRequestException('Provide at least one of title or translatedContent');
+    }
+
+    const issue = await this.issueRepository.findOne({ where: { id } });
+    if (!issue) {
+      throw new NotFoundException(`Issue ${id} not found`);
+    }
+
+    if (dto.title) {
+      issue.title = dto.title;
+    }
+    
+    if (dto.translatedContent) {
+      issue.translatedContent = dto.translatedContent;
+    }
+
+    await this.issueRepository.save(issue);
+
+    return this.getOne(id);
   }
 
   async createGitlabIssueByIssueId(

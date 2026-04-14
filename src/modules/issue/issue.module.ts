@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { IssueEntity } from '../../entities/issue.entity';
+import { ProjectEntity } from '../../entities/project.entity';
 import { UserEntity } from '../../entities/user.entity';
 import { WebhooksModule } from '../webhooks/webhooks.module';
 import { GITLAB_TICKET_QUEUE } from '../webhooks/webhooks.constants';
@@ -10,7 +11,7 @@ import { IssueService } from './issue.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([IssueEntity, UserEntity]),
+    TypeOrmModule.forFeature([IssueEntity, UserEntity, ProjectEntity]),
     BullModule.registerQueue({
       name: GITLAB_TICKET_QUEUE
     }),

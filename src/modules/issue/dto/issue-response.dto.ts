@@ -10,6 +10,9 @@ export class IssueResponseDto {
   @ApiProperty()
   sheetName: string;
 
+  @ApiProperty({ nullable: true })
+  title: string | null;
+
   @ApiProperty()
   is_resolved: boolean;
 

@@ -9,6 +9,7 @@ import {
   GITLAB_TICKET_QUEUE
 } from './webhooks.constants';
 import { IssueEntity } from '../../entities/issue.entity';
+import { ProjectEntity } from '../../entities/project.entity';
 import { GeminiService } from './gemini.service';
 import { SakuraGitlabService } from './gitlab.service';
 
@@ -37,6 +38,7 @@ export class GitlabTicketProcessor extends WorkerHost {
 
   constructor(
     @InjectRepository(IssueEntity) private readonly issueRepository: Repository<IssueEntity>,
+    @InjectRepository(ProjectEntity) private readonly projectRepository: Repository<ProjectEntity>,
     private readonly geminiService: GeminiService,
     private readonly sakuraGitlabService: SakuraGitlabService
   ) {
@@ -66,6 +68,8 @@ export class GitlabTicketProcessor extends WorkerHost {
     const issueNumber = Number(row[2] ?? 0);
     const translatedContent = await this.geminiService.translateText(String(row[12] ?? ''));
 
+    const project = await this.resolveProjectBySpreadsheetId(spreadsheetId);
+
     const existingIssue = await this.issueRepository.findOne({
       where: {
         spreadsheetId,
@@ -83,13 +87,23 @@ export class GitlabTicketProcessor extends WorkerHost {
       existingIssue.small_category = String(row[10] ?? '');
       existingIssue.originalContent = String(row[12] ?? '');
       existingIssue.translatedContent = translatedContent;
+      existingIssue.project = project ?? null;
       await this.issueRepository.save(existingIssue);
       return;
     }
 
+    const title = await this.sakuraGitlabService.buildStoredIssueTitle({
+      number: issueNumber,
+      big_category: String(row[9] ?? ''),
+      small_category: String(row[10] ?? ''),
+      translatedContent
+    });
+
     const issue = this.issueRepository.create({
       spreadsheetId,
       sheetName,
+      title,
+      project: project ?? undefined,
       is_resolved: Boolean(row[0] ?? false),
       number: issueNumber,
       status: String(row[3] ?? ''),
@@ -105,6 +119,20 @@ export class GitlabTicketProcessor extends WorkerHost {
     await this.issueRepository.save(issue);
   }
 
+  private async resolveProjectBySpreadsheetId(spreadsheetId: string): Promise<ProjectEntity | null> {
+    const trimmed = spreadsheetId.trim();
+    if (!trimmed) {
+      return null;
+    }
+    const found = await this.projectRepository.findOne({
+      where: { spreadsheetId: trimmed }
+    });
+    if (!found) {
+      this.logger.warn(`No project row for spreadsheet_id=${trimmed}; issue will have no project link`);
+    }
+    return found;
+  }
+
   private async createGitlabIssueFromIssue(payload: CreateGitlabIssueFromIssuePayload): Promise<void> {
     const issueId = Number(payload?.issueId ?? 0);
     if (!issueId) {
@@ -118,7 +146,7 @@ export class GitlabTicketProcessor extends WorkerHost {
 
     const gitlabUserId = payload.gitlabAssignId;
 
-    const gitlabResponse = await this.sakuraGitlabService.createIssueFromWebhook(issueId, gitlabUserId);
+    const gitlabResponse = await this.sakuraGitlabService.createIssueGitLab(issueId, gitlabUserId);
     issue.url = String((gitlabResponse as { web_url?: string })?.web_url ?? '');
     await this.issueRepository.save(issue);
   }

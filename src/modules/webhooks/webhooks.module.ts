@@ -9,11 +9,12 @@ import { GitlabIssueService, SakuraGitlabService } from './gitlab.service';
 import { GitlabTicketProcessor } from './gitlab-ticket.processor';
 import { GeminiService } from './gemini.service';
 import { IssueEntity } from '../../entities/issue.entity';
+import { ProjectEntity } from '../../entities/project.entity';
 
 @Module({
   imports: [
     HttpModule,
-    TypeOrmModule.forFeature([IssueEntity]),
+    TypeOrmModule.forFeature([IssueEntity, ProjectEntity]),
     BullModule.registerQueue({
       name: GITLAB_TICKET_QUEUE
     })

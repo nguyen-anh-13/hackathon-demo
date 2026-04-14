@@ -40,7 +40,6 @@ abstract class BaseGitlabService extends GitlabIssueService {
     }
 
     const assigneeIds = [25];
-    console.log(assigneeIds);
     const url = `${this.gitlabUrl}/projects/${projectId}/issues`;
     try {
       const response = await firstValueFrom(
@@ -84,7 +83,21 @@ export class SakuraGitlabService extends BaseGitlabService {
     return env.gitlab.sakuraProjectId;
   }
 
-  async createIssueFromWebhook(issueId: number, assignId?: number): Promise<unknown> {
+  async buildStoredIssueTitle(
+    issue: Pick<IssueEntity, 'number' | 'big_category' | 'small_category' | 'translatedContent'>
+  ): Promise<string> {
+    const bigCategory = this.mapLabel(issue.big_category);
+    const smallCategory = this.mapMultiLabels(issue.small_category);
+    const issueDescriptionText = String(issue.translatedContent ?? '')
+      .replace(/[\r\n]+/g, ' ')
+      .trim();
+    const ticketNo = String(issue.number ?? '').trim();
+    const shortTitle = await this.geminiService.summarizeVietnameseTitle(issueDescriptionText, 10);
+    const full = `[UAT] No.${ticketNo} ${bigCategory}/${smallCategory}: ${shortTitle}`.trim();
+    return full.length > 255 ? full.slice(0, 255) : full;
+  }
+
+  async createIssueGitLab(issueId: number, assignId?: number): Promise<unknown> {
     const issue = await this.issueRepository.findOne({
       where: { id: issueId }
     });
@@ -97,11 +110,10 @@ export class SakuraGitlabService extends BaseGitlabService {
     const type = this.mapLabel(issue.type);
     const bigCategory = this.mapLabel(issue.big_category);
     const smallCategory = this.mapMultiLabels(issue.small_category);
-    const customerText = String(issue.originalContent ?? '').replace(/[\r\n]+/g, ' ') .trim();
-    const issueDescriptionText = String(issue.translatedContent).replace(/[\r\n]+/g, ' ') .trim();
+    const customerText = String(issue.originalContent ?? '').replace(/[\r\n]+/g, ' ').trim();
+    const issueDescriptionText = String(issue.translatedContent).replace(/[\r\n]+/g, ' ').trim();
     const ticketNo = String(issue.number ?? '').trim();
-    const shortTitle = await this.geminiService.summarizeVietnameseTitle(issueDescriptionText, 10);
-    const issueTitle = `[UAT] No.${ticketNo} ${bigCategory}/${smallCategory}: ${shortTitle}`.trim();
+    const issueTitle = String(issue.title ?? '').trim();
     const issueLabels = [status, priority, type, bigCategory, smallCategory]
       .filter((value) => value.length > 0);
 

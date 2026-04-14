@@ -24,4 +24,14 @@ export class IssueFilterDto extends PaginationDto {
   @IsOptional()
   @IsString()
   status?: string;
+
+  @ApiPropertyOptional({
+    description: 'Filter by linked project business id (projects.project_id)',
+    example: 77
+  })
+  @IsOptional()
+  @Transform(({ value }) => (value === undefined || value === '' ? undefined : Number(value)))
+  @IsInt()
+  @Min(1)
+  project_id?: number;
 }

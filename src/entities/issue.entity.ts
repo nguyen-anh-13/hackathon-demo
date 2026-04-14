@@ -1,6 +1,6 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
-import { JoinColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { AppBaseEntity } from './base.entity';
+import { ProjectEntity } from './project.entity';
 import { UserEntity } from './user.entity';
 
 @Entity({ name: 'issues' })
@@ -10,6 +10,9 @@ export class IssueEntity extends AppBaseEntity {
 
   @Column({ name: 'sheet_name', type: 'varchar', length: 255 })
   sheetName: string;
+
+  @Column({ name: 'title', type: 'varchar', length: 255, nullable: true })
+  title: string;
 
   @Column({ name: 'is_resolved', type: 'boolean', default: false })
   is_resolved: boolean;
@@ -40,6 +43,10 @@ export class IssueEntity extends AppBaseEntity {
 
   @Column({ type: 'varchar', length: 255, default: '' })
   url: string;
+
+  @ManyToOne(() => ProjectEntity, (project) => project.issues, { nullable: true })
+  @JoinColumn({ name: 'project_id', referencedColumnName: 'id' })
+  project: ProjectEntity | null;
 
   @ManyToOne(() => UserEntity, { nullable: true })
   @JoinColumn({ name: 'assigned_to' })

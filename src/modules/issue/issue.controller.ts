@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { IssueResponseDto } from './dto/issue-response.dto';
@@ -7,6 +7,7 @@ import { IssueService } from './issue.service';
 import { CurrentUser } from '../../decorators';
 import { IssueFilterDto } from './dto/get-issues-query.dto';
 import { IssueListResponseDto } from './dto/issue-list-response.dto';
+import { UpdateIssueDto } from './dto/update-issue.dto';
 
 @ApiTags('issues')
 @Controller('issues')
@@ -27,6 +28,13 @@ export class IssueController {
   @ApiOkResponse({ type: IssueResponseDto })
   getOne(@Param('id', ParseIntPipe) id: number) {
     return this.issueService.getOne(id);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update issue title and/or translated content' })
+  @ApiOkResponse({ type: IssueResponseDto })
+  updateIssue(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateIssueDto) {
+    return this.issueService.updateIssue(id, body);
   }
 
   @Post(':id')
