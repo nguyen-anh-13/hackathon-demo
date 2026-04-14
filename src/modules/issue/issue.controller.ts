@@ -38,7 +38,9 @@ export class IssueController {
   }
 
   @Post(':id')
-  @ApiOperation({ summary: 'Create GitLab issue from stored issue' })
+  @ApiOperation({
+    summary: 'Create GitLab issue from stored issue'
+  })
   @ApiOkResponse({
     schema: {
       type: 'object',
@@ -52,6 +54,6 @@ export class IssueController {
     @Body() body: CreateGitlabIssueDto,
     @CurrentUser('id') userId: number
   ): Promise<any> {
-    return this.issueService.createGitlabIssueByIssueId(id, userId, body.assignId);
+    return this.issueService.createGitlabIssueByIssueId(id, userId, body);
   }
 }

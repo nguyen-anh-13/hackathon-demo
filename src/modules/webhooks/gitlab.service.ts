@@ -117,11 +117,15 @@ export class SakuraGitlabService extends BaseGitlabService {
     const issueLabels = [status, priority, type, bigCategory, smallCategory]
       .filter((value) => value.length > 0);
 
+    const cleanCustomerText = String(issue.originalContent ?? '').trim();
+    const cleanTranslateText = String(issue.translatedContent ?? '').trim();
+    
     const issueDescription = `
-      ##Khách: ${customerText},
-      \n
-      ##Dịch: ${issueDescriptionText}
-      `;
+    **Khách:** <pre>${cleanCustomerText}</pre>
+    
+    **Dịch:** ${cleanTranslateText}
+    
+    `.trim();
 
     return this.createIssue(issueTitle, issueDescription, issueLabels, assignId);
   }

@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { IssueEntity } from '../../entities/issue.entity';
 import { UserEntity } from '../../entities/user.entity';
 import { CREATE_GITLAB_ISSUE_FROM_ISSUE_JOB, GITLAB_TICKET_QUEUE } from '../webhooks/webhooks.constants';
+import { CreateGitlabIssueDto } from './dto/create-gitlab-issue.dto';
 import { IssueFilterDto } from './dto/get-issues-query.dto';
 import { IssueListResponseDto } from './dto/issue-list-response.dto';
 import { UpdateIssueDto } from './dto/update-issue.dto';
@@ -92,18 +93,26 @@ export class IssueService {
   async createGitlabIssueByIssueId(
     issueId: number,
     callerUserId: number,
-    assignId?: number
+    dto: CreateGitlabIssueDto = {}
   ): Promise<{ received: boolean }> {
     const issue = await this.issueRepository.findOne({ where: { id: issueId } });
     if (!issue) {
       throw new NotFoundException(`Issue ${issueId} not found`);
     }
-    
-    const resolvedAssignId = assignId || callerUserId || 25;
+
+    const resolvedAssignId = dto.assignId ?? callerUserId ?? 25;
     const user = await this.userRepository.findOne({ where: { id: resolvedAssignId } });
     if (user) {
       issue.assignedTo = user;
     }
+
+    if (dto.title !== undefined) {
+      issue.title = dto.title;
+    }
+    if (dto.translatedContent !== undefined) {
+      issue.translatedContent = dto.translatedContent;
+    }
+
     await this.issueRepository.save(issue);
 
     await this.gitlabTicketQueue.add(
