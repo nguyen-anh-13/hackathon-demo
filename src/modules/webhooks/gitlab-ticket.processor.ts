@@ -13,7 +13,7 @@ import { ProjectEntity } from '../../entities/project.entity';
 import { GeminiService } from './gemini.service';
 import { SakuraGitlabService } from './gitlab.service';
 
-type CreateGitlabTicketPayload = {
+export type CreateGitlabTicketPayload = {
   payload: {
     spreadsheetId?: string;
     sheetName?: string;
@@ -27,7 +27,7 @@ type CreateGitlabTicketPayload = {
   };
 };
 
-type CreateGitlabIssueFromIssuePayload = {
+export type CreateGitlabIssueFromIssuePayload = {
   issueId: number;
   gitlabAssignId?: number;
 };
@@ -59,6 +59,16 @@ export class GitlabTicketProcessor extends WorkerHost {
     }
 
     this.logger.warn(`Unknown job name: ${job.name}`);
+  }
+
+  /** Gọi trực tiếp thay cho enqueue `CREATE_GITLAB_TICKET_JOB` */
+  async runCreateGitlabTicketFromWebhookPayload(payload: CreateGitlabTicketPayload['payload']): Promise<void> {
+    await this.createIssueRecord(payload);
+  }
+
+  /** Gọi trực tiếp thay cho enqueue `CREATE_GITLAB_ISSUE_FROM_ISSUE_JOB` */
+  async runCreateGitlabIssueFromIssuePayload(data: CreateGitlabIssueFromIssuePayload): Promise<void> {
+    await this.createGitlabIssueFromIssue(data);
   }
 
   private async createIssueRecord(payload: CreateGitlabTicketPayload['payload']): Promise<void> {

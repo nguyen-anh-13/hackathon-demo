@@ -1,17 +1,12 @@
 import { HttpService } from '@nestjs/axios';
-import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Queue } from 'bullmq';
 import { firstValueFrom } from 'rxjs';
 import { Repository } from 'typeorm';
 import { env } from '../../configs/env.config';
 import { IssueEntity } from '../../entities/issue.entity';
 import { GeminiService } from './gemini.service';
-import {
-  SEND_TEAMS_ISSUE_NOTIFICATION_JOB,
-  TEAMS_NOTIFICATION_QUEUE
-} from './webhooks.constants';
+import { TeamsWorkflowService } from './teams-workflow.service';
 
 @Injectable()
 export abstract class GitlabIssueService {
@@ -77,7 +72,7 @@ export class SakuraGitlabService extends BaseGitlabService {
     httpService: HttpService,
     private readonly geminiService: GeminiService,
     @InjectRepository(IssueEntity) private readonly issueRepository: Repository<IssueEntity>,
-    @InjectQueue(TEAMS_NOTIFICATION_QUEUE) private readonly teamsNotificationQueue: Queue
+    private readonly teamsWorkflowService: TeamsWorkflowService
   ) {
     super(httpService);
   }
@@ -136,20 +131,14 @@ export class SakuraGitlabService extends BaseGitlabService {
     const assignee = issue.assignedTo;
 
     if (env.teams.workflowWebhookUrl?.trim()) {
-      await this.teamsNotificationQueue.add(
-        SEND_TEAMS_ISSUE_NOTIFICATION_JOB,
-        {
-          title: issueTitle,
-          content: teamsContent,
-          assigneeEmail: assignee ? String(assignee.email ?? '').trim() : '',
-          assigneeName: assignee ? String(assignee.name ?? '').trim() : '',
-          ticketUrl: webUrl
-        },
-        {
-          attempts: 3,
-          removeOnComplete: true
-        }
-      );
+      // await this.teamsNotificationQueue.add(SEND_TEAMS_ISSUE_NOTIFICATION_JOB, { ... }, { attempts: 3, removeOnComplete: true });
+      await this.teamsWorkflowService.sendIssueNotification({
+        title: issueTitle,
+        content: teamsContent,
+        assigneeEmail: assignee ? String(assignee.email ?? '').trim() : '',
+        assigneeName: assignee ? String(assignee.name ?? '').trim() : '',
+        ticketUrl: webUrl
+      });
     }
 
     return gitlabResponse;
