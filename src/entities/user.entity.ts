@@ -13,6 +13,9 @@ export class UserEntity extends AppBaseEntity {
   @Column({ type: 'varchar', length: 255 })
   name: string;
 
+  @Column({ type: 'varchar', length: 255, default: '' })
+  email: string;
+
   @Column({ type: 'varchar', length: 50, default: 'active' })
   state: string;
 

@@ -2,9 +2,7 @@ import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuar
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { IssueResponseDto } from './dto/issue-response.dto';
-import { CreateGitlabIssueDto } from './dto/create-gitlab-issue.dto';
 import { IssueService } from './issue.service';
-import { CurrentUser } from '../../decorators';
 import { IssueFilterDto } from './dto/get-issues-query.dto';
 import { IssueListResponseDto } from './dto/issue-list-response.dto';
 import { UpdateIssueDto } from './dto/update-issue.dto';
@@ -31,7 +29,10 @@ export class IssueController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update issue title and/or translated content' })
+  @ApiOperation({
+    summary: 'Update issue',
+    description: 'At least one of: title, translatedContent, assignId (`users.id`).'
+  })
   @ApiOkResponse({ type: IssueResponseDto })
   updateIssue(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateIssueDto) {
     return this.issueService.updateIssue(id, body);
@@ -39,7 +40,9 @@ export class IssueController {
 
   @Post(':id')
   @ApiOperation({
-    summary: 'Create GitLab issue from stored issue'
+    summary: 'Create GitLab issue from stored issue',
+    description:
+      'No body. Uses issue assignee if set; otherwise assigns user `DEFAULT_ISSUE_ASSIGNEE_USER_ID` (`users.id`, default 25).'
   })
   @ApiOkResponse({
     schema: {
@@ -49,11 +52,7 @@ export class IssueController {
       }
     }
   })
-  createIssueFromStoredRecord(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: CreateGitlabIssueDto,
-    @CurrentUser('id') userId: number
-  ): Promise<any> {
-    return this.issueService.createGitlabIssueByIssueId(id, userId, body);
+  createIssueFromStoredRecord(@Param('id', ParseIntPipe) id: number): Promise<{ received: boolean }> {
+    return this.issueService.createGitlabIssueByIssueId(id);
   }
 }

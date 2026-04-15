@@ -44,6 +44,9 @@ export class IssueEntity extends AppBaseEntity {
   @Column({ type: 'varchar', length: 255, default: '' })
   url: string;
 
+  @Column({ name: 'is_sent', type: 'boolean', default: true })
+  can_send: boolean;
+
   @ManyToOne(() => ProjectEntity, (project) => project.issues, { nullable: true })
   @JoinColumn({ name: 'project_id', referencedColumnName: 'id' })
   project: ProjectEntity | null;

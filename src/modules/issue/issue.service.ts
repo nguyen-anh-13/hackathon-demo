@@ -3,10 +3,10 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Queue } from 'bullmq';
 import { Repository } from 'typeorm';
+import { env } from '../../configs/env.config';
 import { IssueEntity } from '../../entities/issue.entity';
 import { UserEntity } from '../../entities/user.entity';
 import { CREATE_GITLAB_ISSUE_FROM_ISSUE_JOB, GITLAB_TICKET_QUEUE } from '../webhooks/webhooks.constants';
-import { CreateGitlabIssueDto } from './dto/create-gitlab-issue.dto';
 import { IssueFilterDto } from './dto/get-issues-query.dto';
 import { IssueListResponseDto } from './dto/issue-list-response.dto';
 import { UpdateIssueDto } from './dto/update-issue.dto';
@@ -68,8 +68,12 @@ export class IssueService {
   }
 
   async updateIssue(id: number, dto: UpdateIssueDto): Promise<IssueEntity> {
-    if (dto.title === undefined && dto.translatedContent === undefined) {
-      throw new BadRequestException('Provide at least one of title or translatedContent');
+    if (
+      dto.title === undefined &&
+      dto.translatedContent === undefined &&
+      dto.assignId === undefined
+    ) {
+      throw new BadRequestException('Provide at least one of title, translatedContent, or assignId');
     }
 
     const issue = await this.issueRepository.findOne({ where: { id } });
@@ -77,12 +81,20 @@ export class IssueService {
       throw new NotFoundException(`Issue ${id} not found`);
     }
 
-    if (dto.title) {
+    if (dto.title !== undefined) {
       issue.title = dto.title;
     }
-    
-    if (dto.translatedContent) {
+
+    if (dto.translatedContent !== undefined) {
       issue.translatedContent = dto.translatedContent;
+    }
+
+    if (dto.assignId !== undefined) {
+      const user = await this.userRepository.findOne({ where: { id: dto.assignId } });
+      if (!user) {
+        throw new NotFoundException(`User ${dto.assignId} not found`);
+      }
+      issue.assignedTo = user;
     }
 
     await this.issueRepository.save(issue);
@@ -90,27 +102,32 @@ export class IssueService {
     return this.getOne(id);
   }
 
-  async createGitlabIssueByIssueId(
-    issueId: number,
-    callerUserId: number,
-    dto: CreateGitlabIssueDto = {}
-  ): Promise<{ received: boolean }> {
-    const issue = await this.issueRepository.findOne({ where: { id: issueId } });
+  /**
+   * Enqueues GitLab issue creation. Label fields (status, priority, type, categories) are read from DB
+   * as already translated by the sheet webhook worker — no second mapping there.
+   * Assignee: existing `issue.assignedTo`, or default user `env.issue.defaultAssigneeUserId` (`users.id`).
+   * If `can_send` is false, returns immediately without enqueueing (`{ received: false }`).
+   */
+  async createGitlabIssueByIssueId(issueId: number): Promise<{ received: boolean }> {
+    const issue = await this.issueRepository.findOne({ where: { id: issueId }, relations: ['assignedTo'] });
     if (!issue) {
       throw new NotFoundException(`Issue ${issueId} not found`);
     }
 
-    const resolvedAssignId = dto.assignId ?? callerUserId ?? 25;
-    const user = await this.userRepository.findOne({ where: { id: resolvedAssignId } });
-    if (user) {
-      issue.assignedTo = user;
+    if (!issue.can_send) {
+      return { received: false };
     }
 
-    if (dto.title !== undefined) {
-      issue.title = dto.title;
-    }
-    if (dto.translatedContent !== undefined) {
-      issue.translatedContent = dto.translatedContent;
+    if (!issue.assignedTo) {
+      const defaultUser = await this.userRepository.findOne({
+        where: { id: env.issue.defaultAssigneeUserId }
+      });
+      if (!defaultUser) {
+        throw new NotFoundException(
+          `Default assignee user id ${env.issue.defaultAssigneeUserId} not found in users`
+        );
+      }
+      issue.assignedTo = defaultUser;
     }
 
     await this.issueRepository.save(issue);
@@ -119,7 +136,7 @@ export class IssueService {
       CREATE_GITLAB_ISSUE_FROM_ISSUE_JOB,
       {
         issueId,
-        gitlabAssignId: user?.userId
+        gitlabAssignId: issue.assignedTo.userId
       },
       {
         attempts: 3,

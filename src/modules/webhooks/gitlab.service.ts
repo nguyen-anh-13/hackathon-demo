@@ -1,13 +1,17 @@
 import { HttpService } from '@nestjs/axios';
+import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Queue } from 'bullmq';
 import { firstValueFrom } from 'rxjs';
-import * as fs from 'fs';
-import * as path from 'path';
 import { Repository } from 'typeorm';
 import { env } from '../../configs/env.config';
-import { GeminiService } from './gemini.service';
 import { IssueEntity } from '../../entities/issue.entity';
+import { GeminiService } from './gemini.service';
+import {
+  SEND_TEAMS_ISSUE_NOTIFICATION_JOB,
+  TEAMS_NOTIFICATION_QUEUE
+} from './webhooks.constants';
 
 @Injectable()
 export abstract class GitlabIssueService {
@@ -69,12 +73,11 @@ abstract class BaseGitlabService extends GitlabIssueService {
 
 @Injectable()
 export class SakuraGitlabService extends BaseGitlabService {
-  private readonly labelMap = this.buildLabelMap();
-
   constructor(
     httpService: HttpService,
     private readonly geminiService: GeminiService,
-    @InjectRepository(IssueEntity) private readonly issueRepository: Repository<IssueEntity>
+    @InjectRepository(IssueEntity) private readonly issueRepository: Repository<IssueEntity>,
+    @InjectQueue(TEAMS_NOTIFICATION_QUEUE) private readonly teamsNotificationQueue: Queue
   ) {
     super(httpService);
   }
@@ -86,8 +89,8 @@ export class SakuraGitlabService extends BaseGitlabService {
   async buildStoredIssueTitle(
     issue: Pick<IssueEntity, 'number' | 'big_category' | 'small_category' | 'translatedContent'>
   ): Promise<string> {
-    const bigCategory = this.mapLabel(issue.big_category);
-    const smallCategory = this.mapMultiLabels(issue.small_category);
+    const bigCategory = String(issue.big_category ?? '').trim();
+    const smallCategory = String(issue.small_category ?? '').trim();
     const issueDescriptionText = String(issue.translatedContent ?? '')
       .replace(/[\r\n]+/g, ' ')
       .trim();
@@ -99,21 +102,21 @@ export class SakuraGitlabService extends BaseGitlabService {
 
   async createIssueGitLab(issueId: number, assignId?: number): Promise<unknown> {
     const issue = await this.issueRepository.findOne({
-      where: { id: issueId }
+      where: { id: issueId },
+      relations: ['assignedTo']
     });
     if (!issue) {
       throw new NotFoundException(`Issue ${issueId} not found`);
     }
 
-    const status = this.mapLabel(issue.status);
-    const priority = this.mapLabel(issue.priority);
-    const type = this.mapLabel(issue.type);
-    const bigCategory = this.mapLabel(issue.big_category);
-    const smallCategory = this.mapMultiLabels(issue.small_category);
-    const customerText = String(issue.originalContent ?? '').replace(/[\r\n]+/g, ' ').trim();
-    const issueDescriptionText = String(issue.translatedContent).replace(/[\r\n]+/g, ' ').trim();
-    const ticketNo = String(issue.number ?? '').trim();
-    const issueTitle = String(issue.title ?? '').trim();
+    const status = String(issue.status ?? '').trim();
+    const priority = String(issue.priority ?? '').trim();
+    const type = String(issue.type ?? '').trim();
+    const bigCategory = String(issue.big_category ?? '').trim();
+    const smallCategory = String(issue.small_category ?? '').trim();
+    const issueTitle =
+      String(issue.title ?? '').trim() ||
+      `[UAT] No.${String(issue.number ?? '').trim()} ${bigCategory}/${smallCategory}`.trim().slice(0, 255);
     const issueLabels = [status, priority, type, bigCategory, smallCategory]
       .filter((value) => value.length > 0);
 
@@ -121,60 +124,34 @@ export class SakuraGitlabService extends BaseGitlabService {
     const cleanTranslateText = String(issue.translatedContent ?? '').trim();
     
     const issueDescription = `
-    **Khách:** <pre>${cleanCustomerText}</pre>
+    **Khách:** ${cleanCustomerText}
     
     **Dịch:** ${cleanTranslateText}
     
     `.trim();
 
-    return this.createIssue(issueTitle, issueDescription, issueLabels, assignId);
-  }
+    const gitlabResponse = await this.createIssue(issueTitle, issueDescription, issueLabels, assignId);
+    const webUrl = String((gitlabResponse as { web_url?: string })?.web_url ?? '');
+    const teamsContent = [cleanTranslateText].filter(Boolean).join('\n\n').slice(0, 8000);
+    const assignee = issue.assignedTo;
 
-  private buildLabelMap(): Map<string, string> {
-    const map = new Map<string, string>();
-    const labelsPath = path.join(process.cwd(), 'src', 'language', 'labels.json');
-
-    try {
-      const raw = fs.readFileSync(labelsPath, 'utf8');
-      const labels = JSON.parse(raw) as Array<{ name_en?: string; name_jp?: string }>;
-      for (const item of labels) {
-        const en = String(item.name_en ?? '').trim();
-        const jp = String(item.name_jp ?? '').trim();
-        if (!en) {
-          continue;
+    if (env.teams.workflowWebhookUrl?.trim()) {
+      await this.teamsNotificationQueue.add(
+        SEND_TEAMS_ISSUE_NOTIFICATION_JOB,
+        {
+          title: issueTitle,
+          content: teamsContent,
+          assigneeEmail: assignee ? String(assignee.email ?? '').trim() : '',
+          assigneeName: assignee ? String(assignee.name ?? '').trim() : '',
+          ticketUrl: webUrl
+        },
+        {
+          attempts: 3,
+          removeOnComplete: true
         }
-        if (jp && !map.has(jp)) {
-          map.set(jp, en);
-        }
-        if (!map.has(en)) {
-          map.set(en, en);
-        }
-      }
-    } catch (error) {
-      this.logger.warn(`Cannot load labels mapping: ${String(error)}`);
+      );
     }
 
-    return map;
-  }
-
-  private mapLabel(rawValue: unknown): string {
-    const text = String(rawValue ?? '').trim();
-    if (!text) {
-      return '';
-    }
-    return this.labelMap.get(text) || text;
-  }
-
-  private mapMultiLabels(rawValue: unknown): string {
-    const text = String(rawValue ?? '').trim();
-    if (!text) {
-      return '';
-    }
-
-    return text
-      .split('/')
-      .map((part) => this.mapLabel(part))
-      .filter((part) => part.length > 0)
-      .join('/');
+    return gitlabResponse;
   }
 }

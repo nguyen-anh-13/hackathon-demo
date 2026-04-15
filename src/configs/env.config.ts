@@ -27,7 +27,10 @@ const envSchema = Joi.object({
   GITLAB_PROJECT_ID: Joi.string().allow('').default(''),
   GITLAB_SAKURA_PROJECT_ID: Joi.string().allow('').default(''),
   GEMINI_API_KEY: Joi.string().allow('').default(''),
-  GEMINI_MODEL: Joi.string().default('gemini-1.5-flash')
+  GEMINI_MODEL: Joi.string().default('gemini-1.5-flash'),
+  TEAMS_WORKFLOW_WEBHOOK_URL: Joi.string().allow('').default(''),
+  /** `users.id` used when an issue has no assignee before enqueueing GitLab creation */
+  DEFAULT_ISSUE_ASSIGNEE_USER_ID: Joi.number().integer().positive().default(25)
 }).unknown(true);
 
 const { error, value } = envSchema.validate(process.env, {
@@ -72,6 +75,12 @@ export const env = {
   gemini: {
     apiKey: value.GEMINI_API_KEY as string,
     model: value.GEMINI_MODEL as string
+  },
+  teams: {
+    workflowWebhookUrl: value.TEAMS_WORKFLOW_WEBHOOK_URL as string
+  },
+  issue: {
+    defaultAssigneeUserId: value.DEFAULT_ISSUE_ASSIGNEE_USER_ID as number
   },
   isProduction: value.NODE_ENV === 'production'
 };
