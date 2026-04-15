@@ -39,15 +39,13 @@ async function bootstrap(): Promise<void> {
   );
   app.useGlobalFilters(new AllExceptionsFilter());
 
-  if (!env.isProduction) {
-    const config = new DocumentBuilder()
-      .setTitle('Hackathon Demo API')
-      .setDescription('Base NestJS API')
-      .setVersion('1.0.0')
-      .build();
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup(`${env.appPrefix}/docs`, app, document);
-  }
+  const config = new DocumentBuilder()
+    .setTitle('Hackathon Demo API')
+    .setDescription('Base NestJS API')
+    .setVersion('1.0.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup(`${env.appPrefix}/docs`, app, document);
 
   await app.listen(env.appPort);
 }
