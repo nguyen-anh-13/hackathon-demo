@@ -16,7 +16,7 @@
     "test:cov": "jest --coverage",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migration:generate": "typeorm-ts-node-commonjs migration:generate ./db/migrations/migration -d ./db/data-source.ts",
-    "migration:run": "typeorm-ts-node-commonjs migration:run -d ./db/data-source.ts",
+    "migration:run": "npx typeorm migration:run",
     "migration:revert": "typeorm-ts-node-commonjs migration:revert -d ./db/data-source.ts",
     "schema:drop": "typeorm-ts-node-commonjs schema:drop -d ./db/data-source.ts"
   },
