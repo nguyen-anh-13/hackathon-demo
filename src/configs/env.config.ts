@@ -42,8 +42,13 @@ if (error) {
   throw new Error(`Environment validation failed: ${error.message}`);
 }
 
+const nodeEnv = value.NODE_ENV as string;
+const redisPasswordRaw = String(value.REDIS_PASSWORD ?? '').trim();
+/** In `dev` / `test`, Redis password is never used; in `production`, `REDIS_PASSWORD` is applied when set. */
+const redisPassword = nodeEnv === 'production' ? redisPasswordRaw : '';
+
 export const env = {
-  nodeEnv: value.NODE_ENV as string,
+  nodeEnv,
   appPort: value.APP_PORT as number,
   appPrefix: value.APP_PREFIX as string,
   jwt: {
@@ -65,6 +70,7 @@ export const env = {
   redis: {
     host: value.REDIS_HOST as string,
     port: value.REDIS_PORT as number,
+    password: redisPassword
   },
   gitlab: {
     apiUrl: value.GITLAB_API_URL as string,
@@ -82,5 +88,14 @@ export const env = {
   issue: {
     defaultAssigneeUserId: value.DEFAULT_ISSUE_ASSIGNEE_USER_ID as number
   },
-  isProduction: value.NODE_ENV === 'production'
+  isProduction: nodeEnv === 'production'
 };
+
+/** ioredis / RedisModule URL: includes password only when `env.redis.password` is non-empty (production). */
+export function buildRedisUrl(): string {
+  const { host, port, password } = env.redis;
+  if (password) {
+    return `redis://:${encodeURIComponent(password)}@${host}:${port}`;
+  }
+  return `redis://${host}:${port}`;
+}

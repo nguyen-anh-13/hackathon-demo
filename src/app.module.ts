@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
-import { env } from './configs/env.config';
+import { buildRedisUrl, env } from './configs/env.config';
 import { HealthModule } from './modules/health/health.module';
 import { WebhooksModule } from './modules/webhooks/webhooks.module';
 import { BullModule } from '@nestjs/bullmq';
@@ -27,12 +27,13 @@ import { ProjectModule } from './modules/project/project.module';
     }),
     RedisModule.forRoot({
       type: 'single',
-      url: `redis://${env.redis.host}:${env.redis.port}`,
+      url: buildRedisUrl()
     }),
     BullModule.forRoot({
       connection: {
         host: env.redis.host,
         port: env.redis.port,
+        ...(env.redis.password ? { password: env.redis.password } : {})
       }
     }),
     EventEmitterModule.forRoot(),

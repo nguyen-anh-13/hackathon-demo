@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { env } from './configs/env.config';
+import { buildRedisUrl, env } from './configs/env.config';
 
 @Module({
   imports: [
@@ -20,12 +20,13 @@ import { env } from './configs/env.config';
     }),
     RedisModule.forRoot({
       type: 'single',
-      url: `redis://${env.redis.host}:${env.redis.port}`
+      url: buildRedisUrl()
     }),
     BullModule.forRoot({
       connection: {
         host: env.redis.host,
         port: env.redis.port,
+        ...(env.redis.password ? { password: env.redis.password } : {})
       }
     })
   ]
