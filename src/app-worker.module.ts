@@ -16,6 +16,15 @@ import { buildRedisUrl, env } from './configs/env.config';
       autoLoadEntities: true,
       synchronize: false,
       ssl: env.db.ssl,
+      ...(env.nodeEnv !== 'dev'
+        ? {
+            extra: {
+              ssl: {
+                rejectUnauthorized: false
+              }
+            }
+          }
+        : {}),
       logging: env.db.logging
     }),
     RedisModule.forRoot({
