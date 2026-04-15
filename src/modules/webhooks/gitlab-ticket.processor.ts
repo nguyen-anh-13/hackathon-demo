@@ -77,13 +77,11 @@ export class GitlabTicketProcessor extends WorkerHost {
     const sheetName = String(payload?.sheetName ?? '');
     const issueNumber = Number(row[2] ?? 0);
     const translatedContent = await this.geminiService.translateText(String(row[12] ?? ''));
-    const [status, priority, type, big_category] = await Promise.all([
-      this.geminiService.translateText(String(row[3] ?? '')),
-      this.geminiService.translateText(String(row[4] ?? '')),
-      this.geminiService.translateText(String(row[5] ?? '')),
-      this.geminiService.translateText(String(row[9] ?? ''))
-    ]);
-    const small_category = await this.translateSlashSeparated(String(row[10] ?? ''));
+    const status = this.sakuraGitlabService.mapSheetLabel(row[3]);
+    const priority = this.sakuraGitlabService.mapSheetLabel(row[4]);
+    const type = this.sakuraGitlabService.mapSheetLabel(row[5]);
+    const big_category = this.sakuraGitlabService.mapSheetLabel(row[9]);
+    const small_category = this.sakuraGitlabService.mapSheetMultiLabels(row[10]);
 
     const project = await this.resolveProjectBySpreadsheetId(spreadsheetId);
 
@@ -135,21 +133,6 @@ export class GitlabTicketProcessor extends WorkerHost {
     });
 
     await this.issueRepository.save(issue);
-  }
-
-  /** Each slash-separated segment is translated (JP → VI), then rejoined with `/`. */
-  private async translateSlashSeparated(raw: string): Promise<string> {
-    const text = String(raw ?? '').trim();
-    if (!text) {
-      return '';
-    }
-    const parts = await Promise.all(
-      text.split('/').map((part) => this.geminiService.translateText(part.trim()))
-    );
-    return parts
-      .map((p) => p.trim())
-      .filter((p) => p.length > 0)
-      .join('/');
   }
 
   private async resolveProjectBySpreadsheetId(spreadsheetId: string): Promise<ProjectEntity | null> {

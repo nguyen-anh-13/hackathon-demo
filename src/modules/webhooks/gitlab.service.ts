@@ -1,6 +1,8 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as fs from 'fs';
+import * as path from 'path';
 import { firstValueFrom } from 'rxjs';
 import { Repository } from 'typeorm';
 import { env } from '../../configs/env.config';
@@ -68,6 +70,8 @@ abstract class BaseGitlabService extends GitlabIssueService {
 
 @Injectable()
 export class SakuraGitlabService extends BaseGitlabService {
+  private readonly sheetLabelMap: Map<string, string>;
+
   constructor(
     httpService: HttpService,
     private readonly geminiService: GeminiService,
@@ -75,10 +79,58 @@ export class SakuraGitlabService extends BaseGitlabService {
     private readonly teamsWorkflowService: TeamsWorkflowService
   ) {
     super(httpService);
+    this.sheetLabelMap = this.buildSheetLabelMap();
   }
 
   protected getProjectId(): string {
     return env.gitlab.sakuraProjectId;
+  }
+
+  /** Map sheet cell (JP / EN label text) → `name_en` via `src/language/labels.json`. */
+  mapSheetLabel(rawValue: unknown): string {
+    const text = String(rawValue ?? '').trim();
+    if (!text) {
+      return '';
+    }
+    return this.sheetLabelMap.get(text) || text;
+  }
+
+  /** Slash-separated segments each passed through `mapSheetLabel`. */
+  mapSheetMultiLabels(rawValue: unknown): string {
+    const text = String(rawValue ?? '').trim();
+    if (!text) {
+      return '';
+    }
+    return text
+      .split('/')
+      .map((part) => this.mapSheetLabel(part.trim()))
+      .filter((part) => part.length > 0)
+      .join('/');
+  }
+
+  private buildSheetLabelMap(): Map<string, string> {
+    const map = new Map<string, string>();
+    const labelsPath = path.join(process.cwd(), 'src', 'language', 'labels.json');
+    try {
+      const raw = fs.readFileSync(labelsPath, 'utf8');
+      const labels = JSON.parse(raw) as Array<{ name_en?: string; name_jp?: string }>;
+      for (const item of labels) {
+        const en = String(item.name_en ?? '').trim();
+        const jp = String(item.name_jp ?? '').trim();
+        if (!en) {
+          continue;
+        }
+        if (jp && !map.has(jp)) {
+          map.set(jp, en);
+        }
+        if (!map.has(en)) {
+          map.set(en, en);
+        }
+      }
+    } catch (error) {
+      this.logger.warn(`Cannot load labels.json: ${String(error)}`);
+    }
+    return map;
   }
 
   async buildStoredIssueTitle(
