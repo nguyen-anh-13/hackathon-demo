@@ -84,6 +84,7 @@ export class GitlabTicketProcessor extends WorkerHost {
     const small_category = this.sakuraGitlabService.mapSheetMultiLabels(row[10]);
 
     const project = await this.resolveProjectBySpreadsheetId(spreadsheetId);
+    const projectAssignee = project?.assignedTo ?? null;
 
     const title = await this.sakuraGitlabService.buildStoredIssueTitle({
       number: issueNumber,
@@ -95,9 +96,9 @@ export class GitlabTicketProcessor extends WorkerHost {
     const existingIssue = await this.issueRepository.findOne({
       where: {
         spreadsheetId,
-        sheetName,
         number: issueNumber
-      }
+      },
+      relations: ['project', 'assignedTo']
     });
 
     if (existingIssue) {
@@ -111,8 +112,19 @@ export class GitlabTicketProcessor extends WorkerHost {
       existingIssue.translatedContent = translatedContent;
       existingIssue.title = title;
       existingIssue.project = project ?? null;
+      if (projectAssignee) {
+        existingIssue.assignedTo = projectAssignee;
+      }
       existingIssue.can_send = true;
       await this.issueRepository.save(existingIssue);
+
+      try {
+        await this.sakuraGitlabService.syncStoredIssueToGitLab(existingIssue, project);
+      } catch (err: unknown) {
+        this.logger.warn(
+          `GitLab sync failed after webhook update: ${err instanceof Error ? err.message : String(err)}`
+        );
+      }
       return;
     }
 
@@ -121,6 +133,7 @@ export class GitlabTicketProcessor extends WorkerHost {
       sheetName,
       title,
       project: project ?? undefined,
+      ...(projectAssignee ? { assignedTo: projectAssignee } : {}),
       is_resolved: Boolean(row[0] ?? false),
       number: issueNumber,
       status,
@@ -143,7 +156,8 @@ export class GitlabTicketProcessor extends WorkerHost {
       return null;
     }
     const found = await this.projectRepository.findOne({
-      where: { spreadsheetId: trimmed }
+      where: { spreadsheetId: trimmed },
+      relations: ['assignedTo']
     });
     if (!found) {
       this.logger.warn(`No project row for spreadsheet_id=${trimmed}; issue will have no project link`);

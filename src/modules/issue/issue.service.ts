@@ -1,22 +1,26 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { env } from '../../configs/env.config';
 import { IssueEntity } from '../../entities/issue.entity';
 import { UserEntity } from '../../entities/user.entity';
 import { GitlabTicketProcessor } from '../webhooks/gitlab-ticket.processor';
+import { SakuraGitlabService } from '../webhooks/gitlab.service';
 import { IssueFilterDto } from './dto/get-issues-query.dto';
 import { IssueListResponseDto } from './dto/issue-list-response.dto';
 import { UpdateIssueDto } from './dto/update-issue.dto';
 
 @Injectable()
 export class IssueService {
+  private readonly logger = new Logger(IssueService.name);
+
   constructor(
     @InjectRepository(IssueEntity)
     private readonly issueRepository: Repository<IssueEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    private readonly gitlabTicketProcessor: GitlabTicketProcessor
+    private readonly gitlabTicketProcessor: GitlabTicketProcessor,
+    private readonly sakuraGitlabService: SakuraGitlabService
   ) {}
 
   async getAll(query: IssueFilterDto): Promise<IssueListResponseDto> {
@@ -73,7 +77,10 @@ export class IssueService {
       throw new BadRequestException('Provide at least one of title, translatedContent, or assignId');
     }
 
-    const issue = await this.issueRepository.findOne({ where: { id } });
+    const issue = await this.issueRepository.findOne({
+      where: { id },
+      relations: ['assignedTo', 'project']
+    });
     if (!issue) {
       throw new NotFoundException(`Issue ${id} not found`);
     }
@@ -95,6 +102,20 @@ export class IssueService {
     }
 
     await this.issueRepository.save(issue);
+
+    const forGitlab = await this.issueRepository.findOne({
+      where: { id },
+      relations: ['assignedTo', 'project']
+    });
+    if (forGitlab) {
+      try {
+        await this.sakuraGitlabService.syncStoredIssueToGitLab(forGitlab, forGitlab.project);
+      } catch (err: unknown) {
+        this.logger.warn(
+          `GitLab sync failed after updateIssue: ${err instanceof Error ? err.message : String(err)}`
+        );
+      }
+    }
 
     return this.getOne(id);
   }
