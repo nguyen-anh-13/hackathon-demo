@@ -150,7 +150,7 @@ export class SakuraGitlabService extends BaseGitlabService {
   async createIssueGitLab(issueId: number, assignId?: number): Promise<unknown> {
     const issue = await this.issueRepository.findOne({
       where: { id: issueId },
-      relations: ['assignedTo']
+      relations: ['assignedTo', 'project']
     });
     if (!issue) {
       throw new NotFoundException(`Issue ${issueId} not found`);
@@ -171,10 +171,11 @@ export class SakuraGitlabService extends BaseGitlabService {
     const cleanTranslateText = String(issue.translatedContent ?? '').trim();
     
     const issueDescription = `
+    \n\n
     **Khách:** ${cleanCustomerText}
-    
+    \n
     **Dịch:** ${cleanTranslateText}
-    
+    \n\n
     `.trim();
 
     const gitlabResponse = await this.createIssue(issueTitle, issueDescription, issueLabels, assignId);
@@ -189,7 +190,8 @@ export class SakuraGitlabService extends BaseGitlabService {
         content: teamsContent,
         assigneeEmail: assignee ? String(assignee.email ?? '').trim() : '',
         assigneeName: assignee ? String(assignee.name ?? '').trim() : '',
-        ticketUrl: webUrl
+        ticketUrl: webUrl,
+        teamUrl: issue.project?.teamUrl ?? '' as string
       });
     }
 

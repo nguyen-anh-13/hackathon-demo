@@ -130,10 +130,11 @@ export class GitlabTicketProcessor extends WorkerHost {
       small_category,
       originalContent: String(row[12] ?? ''),
       translatedContent,
-      created_at: new Date(String(row[7] ?? ''))
+      created_at: row[7] ? new Date(String(row[7])) : new Date()
     });
 
     await this.issueRepository.save(issue);
+    this.logger.log(`Issue record saved for spreadsheet_id=${spreadsheetId}, sheet_name=${sheetName}, issue_number=${issueNumber}`);
   }
 
   private async resolveProjectBySpreadsheetId(spreadsheetId: string): Promise<ProjectEntity | null> {

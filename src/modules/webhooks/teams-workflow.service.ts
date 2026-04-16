@@ -9,6 +9,7 @@ export type TeamsIssueNotificationPayload = {
   assigneeEmail: string;
   assigneeName: string;
   ticketUrl: string;
+  teamUrl: string;
 };
 
 @Injectable()
@@ -94,9 +95,9 @@ export class TeamsWorkflowService {
   }
 
   async sendIssueNotification(payload: TeamsIssueNotificationPayload): Promise<void> {
-    const webhookUrl = env.teams.workflowWebhookUrl?.trim();
+    const webhookUrl = payload.teamUrl?.trim() || env.teams.workflowWebhookUrl?.trim();
     if (!webhookUrl) {
-      this.logger.warn('TEAMS_WORKFLOW_WEBHOOK_URL is empty; skip Teams notification');
+      this.logger.warn('Team URL is empty; skip Teams notification');
       return;
     }
 

@@ -26,7 +26,7 @@ export class IssueService {
     const queryBuilder = this.issueRepository
       .createQueryBuilder('issue')
       .leftJoinAndSelect('issue.assignedTo', 'assignedTo')
-      .orderBy('issue.created_at', 'DESC')
+      .orderBy('issue.updated_at', 'DESC')
       .skip((page - 1) * limit)
       .take(limit);
 
