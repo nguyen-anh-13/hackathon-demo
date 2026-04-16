@@ -20,6 +20,12 @@ export class IssueEntity extends AppBaseEntity {
   @Column({ type: 'int' })
   number: number;
 
+  @Column({ type: 'int', nullable: true })
+  row: number | null;
+
+  @Column({ type: 'int', nullable: true })
+  col: number | null;
+
   @Column({ type: 'varchar', length: 255, default: '' })
   status: string;
 

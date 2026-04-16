@@ -76,6 +76,8 @@ export class GitlabTicketProcessor extends WorkerHost {
     const spreadsheetId = String(payload?.spreadsheetId ?? '');
     const sheetName = String(payload?.sheetName ?? '');
     const issueNumber = Number(row[2] ?? 0);
+    const cellRow = Number(payload?.changedCell?.row);
+    const cellCol = Number(payload?.changedCell?.col);
     const translatedContent = await this.geminiService.translateText(String(row[12] ?? ''));
     const status = this.sakuraGitlabService.mapSheetLabel(row[3]);
     const priority = this.sakuraGitlabService.mapSheetLabel(row[4]);
@@ -116,6 +118,12 @@ export class GitlabTicketProcessor extends WorkerHost {
         existingIssue.assignedTo = projectAssignee;
       }
       existingIssue.can_send = true;
+      if (cellRow != null) {
+        existingIssue.row = cellRow;
+      }
+      if (cellCol != null) {
+        existingIssue.col = cellCol;
+      }
       await this.issueRepository.save(existingIssue);
 
       try {
@@ -136,6 +144,8 @@ export class GitlabTicketProcessor extends WorkerHost {
       ...(projectAssignee ? { assignedTo: projectAssignee } : {}),
       is_resolved: Boolean(row[0] ?? false),
       number: issueNumber,
+      ...(cellRow != null ? { row: cellRow } : {}),
+      ...(cellCol != null ? { col: cellCol } : {}),
       status,
       priority,
       type,

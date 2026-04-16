@@ -26,6 +26,16 @@ export class ProjectController {
     return this.projectService.getGitlabProjectDetail(String(id));
   }
 
+  @Get('detail/:id')
+  @ApiOperation({
+    summary: 'Project detail',
+    description: 'Get project detail by id.'
+  })
+  @ApiOkResponse({ type: GitlabProjectDetailResponseDto })
+  getProjectById(@Param('id', ParseIntPipe) id: number) {
+    return this.projectService.getProjectById(id);
+  }
+
   @Post()
   @ApiOperation({ summary: 'Create project' })
   @ApiCreatedResponse({ type: ProjectResponseDto })

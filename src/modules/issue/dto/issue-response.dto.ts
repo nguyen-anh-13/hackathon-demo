@@ -25,6 +25,12 @@ export class IssueResponseDto {
   @ApiProperty()
   number: number;
 
+  @ApiPropertyOptional({ nullable: true, description: 'Last webhook `changedCell.row`' })
+  row: number | null;
+
+  @ApiPropertyOptional({ nullable: true, description: 'Last webhook `changedCell.col`' })
+  col: number | null;
+
   @ApiProperty()
   status: string;
 

@@ -128,6 +128,10 @@ export class ProjectService {
     };
   }
 
+  async getProjectById(id: number): Promise<ProjectEntity | null> {
+    return await this.projectRepository.findOne({ where: { id } });
+  }
+
   async getGitlabProjectDetail(gitlabProjectId: string): Promise<GitlabProjectDetailResponseDto> {
     const data = await this.gitlabApiClient.getProject(gitlabProjectId);
     return {

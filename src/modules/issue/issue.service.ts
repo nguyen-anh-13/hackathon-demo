@@ -178,6 +178,8 @@ export class IssueService {
       title: issue.title,
       is_resolved: issue.is_resolved,
       number: issue.number,
+      row: issue.row ?? null,
+      col: issue.col ?? null,
       status: issue.status,
       priority: issue.priority,
       type: issue.type,
