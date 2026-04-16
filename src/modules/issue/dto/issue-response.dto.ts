@@ -1,8 +1,14 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class IssueResponseDto {
   @ApiProperty()
   id: number;
+
+  @ApiPropertyOptional({
+    nullable: true,
+    description: 'GitLab/business project id from linked `projects.project_id`'
+  })
+  project_id: number | null;
 
   @ApiProperty()
   spreadsheetId: string;

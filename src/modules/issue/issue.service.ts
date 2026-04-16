@@ -8,6 +8,7 @@ import { GitlabTicketProcessor } from '../webhooks/gitlab-ticket.processor';
 import { SakuraGitlabService } from '../webhooks/gitlab.service';
 import { IssueFilterDto } from './dto/get-issues-query.dto';
 import { IssueListResponseDto } from './dto/issue-list-response.dto';
+import { IssueResponseDto } from './dto/issue-response.dto';
 import { UpdateIssueDto } from './dto/update-issue.dto';
 
 @Injectable()
@@ -30,6 +31,7 @@ export class IssueService {
     const queryBuilder = this.issueRepository
       .createQueryBuilder('issue')
       .leftJoinAndSelect('issue.assignedTo', 'assignedTo')
+      .leftJoinAndSelect('issue.project', 'project')
       .orderBy('issue.updated_at', 'DESC')
       .skip((page - 1) * limit)
       .take(limit);
@@ -39,9 +41,7 @@ export class IssueService {
     }
 
     if (query.project_id != null) {
-      queryBuilder
-        .innerJoin('issue.project', 'project')
-        .andWhere('project.project_id = :project_id', { project_id: query.project_id });
+      queryBuilder.andWhere('project.project_id = :project_id', { project_id: query.project_id });
     }
 
     if (query.priority) {
@@ -50,7 +50,8 @@ export class IssueService {
       });
     }
 
-    const [data, total] = await queryBuilder.getManyAndCount();
+    const [rows, total] = await queryBuilder.getManyAndCount();
+    const data = rows.map((issue) => this.toIssueResponse(issue));
 
     return {
       data,
@@ -61,20 +62,20 @@ export class IssueService {
     };
   }
 
-  async getOne(id: number): Promise<IssueEntity> {
+  async getOne(id: number): Promise<IssueResponseDto> {
     const issue = await this.issueRepository.findOne({
       where: { id },
-      relations: ['assignedTo']
+      relations: ['assignedTo', 'project']
     });
 
     if (!issue) {
       throw new NotFoundException(`Issue ${id} not found`);
     }
 
-    return issue;
+    return this.toIssueResponse(issue);
   }
 
-  async updateIssue(id: number, dto: UpdateIssueDto): Promise<IssueEntity> {
+  async updateIssue(id: number, dto: UpdateIssueDto): Promise<IssueResponseDto> {
     if (
       dto.title === undefined &&
       dto.translatedContent === undefined &&
@@ -166,5 +167,27 @@ export class IssueService {
     });
 
     return { received: true };
+  }
+
+  private toIssueResponse(issue: IssueEntity): IssueResponseDto {
+    return {
+      id: issue.id,
+      project_id: issue.project?.project_id ?? null,
+      spreadsheetId: issue.spreadsheetId,
+      sheetName: issue.sheetName,
+      title: issue.title,
+      is_resolved: issue.is_resolved,
+      number: issue.number,
+      status: issue.status,
+      priority: issue.priority,
+      type: issue.type,
+      big_category: issue.big_category,
+      small_category: issue.small_category,
+      originalContent: issue.originalContent,
+      translatedContent: issue.translatedContent,
+      url: issue.url,
+      created_at: issue.created_at,
+      updated_at: issue.updated_at
+    };
   }
 }
