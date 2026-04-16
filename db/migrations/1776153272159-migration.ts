@@ -9,11 +9,6 @@ export class Migration1776153272159 implements MigrationInterface {
         await queryRunner.query(
             `ALTER TABLE "issues" ADD CONSTRAINT "FK_issues_project_id" FOREIGN KEY ("project_id") REFERENCES "projects"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`
         );
-    
-        await queryRunner.query(`
-            INSERT INTO "projects" ("project_id", "name", "spreadsheet_id", "created_at", "updated_at")
-            VALUES (77, 'hackathon', '13Q8MxHODSqMopu1PgZc7yJbeDPrQDTnSxxiE_3uTiA4', NOW(), NOW())
-        `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
