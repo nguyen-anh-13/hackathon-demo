@@ -44,6 +44,12 @@ export class IssueService {
         .andWhere('project.project_id = :project_id', { project_id: query.project_id });
     }
 
+    if (query.priority) {
+      queryBuilder.andWhere('LOWER(TRIM(issue.priority)) = LOWER(TRIM(:priority))', {
+        priority: query.priority
+      });
+    }
+
     const [data, total] = await queryBuilder.getManyAndCount();
 
     return {

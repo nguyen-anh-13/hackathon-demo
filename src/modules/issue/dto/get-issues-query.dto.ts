@@ -1,6 +1,9 @@
 import { ApiPropertyOptional, IntersectionType } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { IsIn, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+
+export const ISSUE_PRIORITY_FILTER_VALUES = ['high', 'low', 'medium'] as const;
+export type IssuePriorityFilter = (typeof ISSUE_PRIORITY_FILTER_VALUES)[number];
 
 export class PaginationDto {
   @ApiPropertyOptional({ example: 1, minimum: 1, default: 1 })
@@ -34,4 +37,10 @@ export class IssueFilterDto extends PaginationDto {
   @IsInt()
   @Min(1)
   project_id?: number;
+
+  @ApiPropertyOptional({ enum: ISSUE_PRIORITY_FILTER_VALUES, description: 'Exact match (case-insensitive)' })
+  @IsOptional()
+  @IsString()
+  @IsIn(ISSUE_PRIORITY_FILTER_VALUES)
+  priority?: IssuePriorityFilter;
 }
