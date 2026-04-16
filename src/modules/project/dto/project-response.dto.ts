@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class ProjectResponseDto {
   @ApiProperty()
@@ -18,4 +18,10 @@ export class ProjectResponseDto {
 
   @ApiProperty()
   spreadsheetId: string;
+
+  @ApiPropertyOptional({ nullable: true, description: 'Assignee `users.id`' })
+  assignedToId?: number | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  teamUrl?: string | null;
 }

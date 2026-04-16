@@ -111,6 +111,7 @@ export class GitlabTicketProcessor extends WorkerHost {
       existingIssue.translatedContent = translatedContent;
       existingIssue.title = title;
       existingIssue.project = project ?? null;
+      existingIssue.can_send = true;
       await this.issueRepository.save(existingIssue);
       return;
     }

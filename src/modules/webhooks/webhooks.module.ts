@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { BullModule } from '@nestjs/bullmq';
+import { GeminiApiClient } from '../../clients/gemini/gemini-api.client';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WebhooksController } from './webhooks.controller';
 import { WebhooksService } from './webhooks.service';
@@ -25,6 +26,7 @@ import { ProjectEntity } from '../../entities/project.entity';
   controllers: [WebhooksController],
   providers: [
     WebhooksService,
+    GeminiApiClient,
     GeminiService,
     SakuraGitlabService,
     {

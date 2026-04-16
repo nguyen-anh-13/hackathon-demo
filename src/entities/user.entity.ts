@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { AppBaseEntity } from './base.entity';
 import { IssueEntity } from './issue.entity';
+import { ProjectEntity } from './project.entity';
   
 @Entity({ name: 'users' })
 export class UserEntity extends AppBaseEntity {
@@ -23,5 +24,8 @@ export class UserEntity extends AppBaseEntity {
   password: string;
 
   @OneToMany(() => IssueEntity, (issue) => issue.assignedTo)
-  issues: IssueEntity[]; 
+  issues: IssueEntity[];
+
+  @OneToMany(() => ProjectEntity, (project) => project.assignedTo)
+  assignedProjects: ProjectEntity[];
 }
