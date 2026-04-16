@@ -10,6 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module';
 import { IssueModule } from './modules/issue/issue.module';
 import { ProjectModule } from './modules/project/project.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { ProjectModule } from './modules/project/project.module';
     AuthModule,
     IssueModule,
     ProjectModule,
+    UserModule,
     WebhooksModule
   ]
 })
