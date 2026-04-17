@@ -17,7 +17,7 @@ async function bootstrap(): Promise<void> {
   });
 
   app.enableCors({
-    origin: true,
+    origin: ['https://hackathon-5-demo.vercel.app', 'http://localhost:3003'],
     credentials: true
   });
 

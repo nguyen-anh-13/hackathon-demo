@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { UserEntity } from 'src/entities/user.entity';
 
 export class IssueResponseDto {
   @ApiProperty()
@@ -60,4 +61,7 @@ export class IssueResponseDto {
 
   @ApiProperty()
   updated_at: Date;
+
+  @ApiProperty()
+  assignedTo: UserEntity;
 }

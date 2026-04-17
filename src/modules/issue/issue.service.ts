@@ -189,7 +189,8 @@ export class IssueService {
       translatedContent: issue.translatedContent,
       url: issue.url,
       created_at: issue.created_at,
-      updated_at: issue.updated_at
+      updated_at: issue.updated_at,
+      assignedTo: issue.assignedTo
     };
   }
 }
