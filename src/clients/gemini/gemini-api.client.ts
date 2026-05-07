@@ -2,6 +2,16 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { env } from '../../configs/env.config';
 
+type GoogleTranslateFn = (
+  text: string,
+  opts?: { from?: string; to?: string }
+) => Promise<{ text?: string }>;
+
+function loadGoogleTranslate(): GoogleTranslateFn {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports -- CommonJS package, no bundled types
+  return require('google-translate-api') as GoogleTranslateFn;
+}
+
 @Injectable()
 export class GeminiApiClient {
   private readonly logger = new Logger(GeminiApiClient.name);
@@ -36,7 +46,25 @@ export class GeminiApiClient {
     } catch (error: unknown) {
       const err = error as { message?: string };
       this.logger.error(`Gemini translate failed: ${err?.message || error}`);
+      const fallback = await this.translateWithGoogleTranslateApi(input);
+      if (fallback !== null) {
+        this.logger.log('Translation: used google-translate-api fallback (ja → vi)');
+        return fallback;
+      }
       return text;
+    }
+  }
+
+  private async translateWithGoogleTranslateApi(text: string): Promise<string | null> {
+    try {
+      const translate = loadGoogleTranslate();
+      const res = await translate(text, { from: 'ja', to: 'vi' });
+      const out = String(res?.text ?? '').trim();
+      return out.length > 0 ? out : null;
+    } catch (error: unknown) {
+      const e = error as { message?: string };
+      this.logger.warn(`google-translate-api failed: ${e?.message ?? error}`);
+      return null;
     }
   }
 

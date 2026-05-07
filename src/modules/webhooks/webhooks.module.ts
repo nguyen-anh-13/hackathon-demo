@@ -37,6 +37,6 @@ import { ProjectEntity } from '../../entities/project.entity';
     TeamsWorkflowService,
     TeamsNotificationProcessor
   ],
-  exports: [SakuraGitlabService, GitlabTicketProcessor]
+  exports: [SakuraGitlabService, GitlabTicketProcessor, GeminiService, TeamsWorkflowService]
 })
 export class WebhooksModule {}

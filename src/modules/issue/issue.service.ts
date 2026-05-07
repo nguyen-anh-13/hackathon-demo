@@ -10,6 +10,8 @@ import { IssueFilterDto } from './dto/get-issues-query.dto';
 import { IssueListResponseDto } from './dto/issue-list-response.dto';
 import { IssueResponseDto } from './dto/issue-response.dto';
 import { UpdateIssueDto } from './dto/update-issue.dto';
+import { GeminiService } from '../webhooks/gemini.service';
+import { TeamsWorkflowService } from '../webhooks/teams-workflow.service';
 
 @Injectable()
 export class IssueService {
@@ -21,7 +23,9 @@ export class IssueService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly gitlabTicketProcessor: GitlabTicketProcessor,
-    private readonly sakuraGitlabService: SakuraGitlabService
+    private readonly sakuraGitlabService: SakuraGitlabService,
+    private readonly geminiService: GeminiService,
+    private readonly teamsWorkflowService: TeamsWorkflowService
   ) {}
 
   async getAll(query: IssueFilterDto): Promise<IssueListResponseDto> {
@@ -97,7 +101,7 @@ export class IssueService {
     }
 
     if (dto.translatedContent !== undefined) {
-      issue.translatedContent = dto.translatedContent;
+      issue.translatedContent = await this.geminiService.translateText(dto.translatedContent);
     }
 
     if (dto.assignId !== undefined) {
@@ -131,9 +135,13 @@ export class IssueService {
    * Runs GitLab issue creation inline (queue disabled). Label fields are read from DB as translated by the webhook worker.
    * Assignee: existing `issue.assignedTo`, or default user `env.issue.defaultAssigneeUserId` (`users.id`).
    * If `can_send` is false, returns `{ received: false }` without running GitLab.
+   * If `can_send` is true but `url` already points to a GitLab issue, syncs that issue (PUT) instead of creating a new one.
    */
   async createGitlabIssueByIssueId(issueId: number): Promise<{ received: boolean }> {
-    const issue = await this.issueRepository.findOne({ where: { id: issueId }, relations: ['assignedTo'] });
+    const issue = await this.issueRepository.findOne({
+      where: { id: issueId },
+      relations: ['assignedTo', 'project']
+    });
     if (!issue) {
       throw new NotFoundException(`Issue ${issueId} not found`);
     }
@@ -142,16 +150,42 @@ export class IssueService {
       return { received: false };
     }
 
-    if (!issue.assignedTo) {
-      const defaultUser = await this.userRepository.findOne({
-        where: { id: env.issue.defaultAssigneeUserId }
-      });
-      if (!defaultUser) {
-        throw new NotFoundException(
-          `Default assignee user id ${env.issue.defaultAssigneeUserId} not found in users`
+    const linkedUrl = String(issue.url ?? '').trim();
+    if (linkedUrl) {
+      try {
+        await this.sakuraGitlabService.syncStoredIssueToGitLab(issue, issue.project);
+
+        const cleanTranslateText = String(issue.translatedContent ?? '')
+          .replace(/^-{3,}$/gm, '\n')
+          .trim();
+        const teamsContent = [cleanTranslateText].filter(Boolean).join('\n\n').slice(0, 8000);
+        const assignee = issue.assignedTo;
+        const baseTitle = String(issue.title ?? '').trim();
+        const notifTitle =
+          (`[Cập nhật issue] No.${issue.number}${baseTitle ? ` — ${baseTitle}` : ''}`).trim().slice(0, 255) ||
+          `[Cập nhật issue] No.${issue.number}`;
+  
+        await this.teamsWorkflowService.sendIssueNotification({
+          title: notifTitle,
+          content: teamsContent,
+          assigneeEmail: assignee ? String(assignee.email ?? '').trim() : '',
+          assigneeName: assignee ? String(assignee.name ?? '').trim() : '',
+          ticketUrl: String(issue.url ?? '').trim(),
+          teamUrl: String(issue.project?.teamUrl ?? '').trim()
+        });
+      } catch (err: unknown) {
+        this.logger.warn(
+          `GitLab sync failed (existing url): ${err instanceof Error ? err.message : String(err)}`
         );
+        return { received: false };
       }
-      issue.assignedTo = defaultUser;
+      issue.can_send = false;
+      await this.issueRepository.save(issue);
+      return { received: true };
+    }
+
+    if (!issue.assignedTo) {
+      throw new NotFoundException(`Issue ${issueId} has no assignee; set assignee before creating GitLab issue`);
     }
 
     await this.issueRepository.save(issue);
@@ -190,7 +224,8 @@ export class IssueService {
       url: issue.url,
       created_at: issue.created_at,
       updated_at: issue.updated_at,
-      assignedTo: issue.assignedTo
+      assignedTo: issue.assignedTo,
+      can_send: Boolean(issue.can_send ?? false)
     };
   }
 }

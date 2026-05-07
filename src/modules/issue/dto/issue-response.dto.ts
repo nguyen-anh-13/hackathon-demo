@@ -64,4 +64,7 @@ export class IssueResponseDto {
 
   @ApiProperty()
   assignedTo: UserEntity;
+
+  @ApiProperty()
+  can_send: boolean;
 }

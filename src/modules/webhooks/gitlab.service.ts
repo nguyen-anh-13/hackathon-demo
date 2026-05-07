@@ -74,7 +74,7 @@ abstract class BaseGitlabService extends GitlabIssueService {
       throw new Error('GitLab configuration is missing');
     }
 
-    const assigneeIds = [25];
+    const assigneeIds = [assignId];
     const url = `${this.gitlabUrl}/projects/${projectId}/issues`;
     try {
       const response = await firstValueFrom(
@@ -254,6 +254,12 @@ export class SakuraGitlabService extends BaseGitlabService {
       throw new NotFoundException(`Issue ${issueId} not found`);
     }
 
+    const linkedUrl = String(issue.url ?? '').trim();
+    if (linkedUrl) {
+      await this.syncStoredIssueToGitLab(issue, issue.project);
+      return { web_url: linkedUrl };
+    }
+
     const status = String(issue.status ?? '').trim();
     const priority = String(issue.priority ?? '').trim();
     const type = String(issue.type ?? '').trim();
@@ -273,17 +279,15 @@ export class SakuraGitlabService extends BaseGitlabService {
     const teamsContent = [cleanTranslateText].filter(Boolean).join('\n\n').slice(0, 8000);
     const assignee = issue.assignedTo;
 
-    if (env.teams.workflowWebhookUrl?.trim()) {
-      // await this.teamsNotificationQueue.add(SEND_TEAMS_ISSUE_NOTIFICATION_JOB, { ... }, { attempts: 3, removeOnComplete: true });
-      // await this.teamsWorkflowService.sendIssueNotification({
-      //   title: issueTitle,
-      //   content: teamsContent,
-      //   assigneeEmail: assignee ? String(assignee.email ?? '').trim() : '',
-      //   assigneeName: assignee ? String(assignee.name ?? '').trim() : '',
-      //   ticketUrl: webUrl,
-      //   teamUrl: issue.project?.teamUrl ?? '' as string
-      // });
-    }
+    // await this.teamsNotificationQueue.add(SEND_TEAMS_ISSUE_NOTIFICATION_JOB, { ... }, { attempts: 3, removeOnComplete: true });
+    await this.teamsWorkflowService.sendIssueNotification({
+      title: issueTitle,
+      content: teamsContent,
+      assigneeEmail: assignee ? String(assignee.email ?? '').trim() : '',
+      assigneeName: assignee ? String(assignee.name ?? '').trim() : '',
+      ticketUrl: webUrl,
+      teamUrl: issue.project?.teamUrl ?? '' as string
+    });
 
     return gitlabResponse;
   }
