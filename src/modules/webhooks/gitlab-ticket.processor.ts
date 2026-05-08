@@ -12,6 +12,7 @@ import { IssueEntity } from '../../entities/issue.entity';
 import { ProjectEntity } from '../../entities/project.entity';
 import { GeminiService } from './gemini.service';
 import { SakuraGitlabService } from './gitlab.service';
+import { SpreadsheetSyncService } from '../spreadsheet-sync/spreadsheet-sync.service';
 
 export type CreateGitlabTicketPayload = {
   payload: {
@@ -40,7 +41,8 @@ export class GitlabTicketProcessor extends WorkerHost {
     @InjectRepository(IssueEntity) private readonly issueRepository: Repository<IssueEntity>,
     @InjectRepository(ProjectEntity) private readonly projectRepository: Repository<ProjectEntity>,
     private readonly geminiService: GeminiService,
-    private readonly sakuraGitlabService: SakuraGitlabService
+    private readonly sakuraGitlabService: SakuraGitlabService,
+    private readonly spreadsheetSyncService: SpreadsheetSyncService,
   ) {
     super();
   }
@@ -126,6 +128,8 @@ export class GitlabTicketProcessor extends WorkerHost {
       }
       await this.issueRepository.save(existingIssue);
 
+      await this.spreadsheetSyncService.syncRow(payload, translatedContent);
+
       try {
         await this.sakuraGitlabService.syncStoredIssueToGitLab(existingIssue, project);
       } catch (err: unknown) {
@@ -158,6 +162,8 @@ export class GitlabTicketProcessor extends WorkerHost {
 
     await this.issueRepository.save(issue);
     this.logger.log(`Issue record saved for spreadsheet_id=${spreadsheetId}, sheet_name=${sheetName}, issue_number=${issueNumber}`);
+
+    await this.spreadsheetSyncService.syncRow(payload, translatedContent);
   }
 
   private async resolveProjectBySpreadsheetId(spreadsheetId: string): Promise<ProjectEntity | null> {

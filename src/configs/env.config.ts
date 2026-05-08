@@ -30,7 +30,9 @@ const envSchema = Joi.object({
   GEMINI_MODEL: Joi.string().default('gemini-1.5-flash'),
   TEAMS_WORKFLOW_WEBHOOK_URL: Joi.string().allow('').default(''),
   /** `users.id` used when an issue has no assignee before enqueueing GitLab creation */
-  DEFAULT_ISSUE_ASSIGNEE_USER_ID: Joi.number().integer().positive().default(25)
+  DEFAULT_ISSUE_ASSIGNEE_USER_ID: Joi.number().integer().positive().default(25),
+  GOOGLE_SERVICE_ACCOUNT_EMAIL: Joi.string().allow('').default(''),
+  GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: Joi.string().allow('').default('')
 }).unknown(true);
 
 const { error, value } = envSchema.validate(process.env, {
@@ -87,6 +89,10 @@ export const env = {
   },
   issue: {
     defaultAssigneeUserId: value.DEFAULT_ISSUE_ASSIGNEE_USER_ID as number
+  },
+  google: {
+    serviceAccountEmail: value.GOOGLE_SERVICE_ACCOUNT_EMAIL as string,
+    serviceAccountPrivateKey: (value.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY as string).replace(/\\n/g, '\n')
   },
   isProduction: nodeEnv === 'production'
 };

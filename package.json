@@ -16,9 +16,10 @@
     "test:cov": "jest --coverage",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migration:generate": "typeorm-ts-node-commonjs migration:generate ./db/migrations/migration -d ./db/data-source.ts",
-    "migration:run": "npx typeorm migration:run",
+    "migration:run": "npm run typeorm -- migration:run",
     "migration:revert": "typeorm-ts-node-commonjs migration:revert -d ./db/data-source.ts",
-    "schema:drop": "typeorm-ts-node-commonjs schema:drop -d ./db/data-source.ts"
+    "schema:drop": "typeorm-ts-node-commonjs schema:drop -d ./db/data-source.ts",
+    "typeorm": "typeorm-ts-node-commonjs -d ./db/data-source.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -43,6 +44,7 @@
     "class-validator": "^0.14.2",
     "dotenv": "^16.4.7",
     "google-translate-api": "^2.3.0",
+    "googleapis": "^171.4.0",
     "helmet": "^8.0.0",
     "ioredis": "^5.4.2",
     "joi": "^17.13.3",

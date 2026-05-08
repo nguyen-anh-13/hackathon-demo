@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateProjectDto } from './dto/create-project.dto';
+import { CreateProjectFromUrlDto } from './dto/create-project-from-url.dto';
 import { GitlabProjectDetailResponseDto } from './dto/gitlab-project-detail-response.dto';
 import { ProjectListQueryDto } from './dto/get-projects-query.dto';
 import { ProjectListResponseDto } from './dto/project-list-response.dto';
@@ -37,10 +38,14 @@ export class ProjectController {
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create project' })
+  @ApiOperation({
+    summary: 'Create project from Google Sheets URL',
+    description:
+      'Fetches spreadsheet metadata (title, sheet tabs) from the given URL and creates a project with all sheets populated. Optionally set a sync destination URL.',
+  })
   @ApiCreatedResponse({ type: ProjectResponseDto })
-  create(@Body() body: CreateProjectDto) {
-    return this.projectService.create(body);
+  createFromUrl(@Body() body: CreateProjectFromUrlDto) {
+    return this.projectService.createFromUrl(body);
   }
 
   @Patch(':id')

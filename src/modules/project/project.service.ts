@@ -6,10 +6,13 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { GoogleSheetsClient } from '../../clients/google-sheets/google-sheets.client';
 import { GitlabApiClient } from '../../clients/gitlab/gitlab-api.client';
 import { ProjectEntity } from '../../entities/project.entity';
+import { SpreadsheetSheetEntity } from '../../entities/spreadsheet-sheet.entity';
 import { UserEntity } from '../../entities/user.entity';
 import { CreateProjectDto } from './dto/create-project.dto';
+import { CreateProjectFromUrlDto } from './dto/create-project-from-url.dto';
 import { GitlabProjectDetailResponseDto } from './dto/gitlab-project-detail-response.dto';
 import { ProjectListQueryDto } from './dto/get-projects-query.dto';
 import { ProjectListResponseDto } from './dto/project-list-response.dto';
@@ -23,7 +26,10 @@ export class ProjectService {
     private readonly projectRepository: Repository<ProjectEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    private readonly gitlabApiClient: GitlabApiClient
+    @InjectRepository(SpreadsheetSheetEntity)
+    private readonly sheetRepository: Repository<SpreadsheetSheetEntity>,
+    private readonly gitlabApiClient: GitlabApiClient,
+    private readonly googleSheetsClient: GoogleSheetsClient,
   ) {}
 
   async getAll(query: ProjectListQueryDto): Promise<ProjectListResponseDto> {
@@ -49,19 +55,27 @@ export class ProjectService {
     };
   }
 
-  async create(dto: CreateProjectDto): Promise<ProjectResponseDto> {
-    const existing = await this.projectRepository.findOne({ where: { project_id: dto.project_id } });
-    if (existing) {
-      throw new ConflictException(`Project with project_id ${dto.project_id} already exists`);
-    }
-
+  /**
+   * Creates a project by fetching metadata directly from the Google Sheets URL.
+   * Also creates SpreadsheetSheetEntity records for every tab found in the spreadsheet.
+   * If `syncUrl` is provided, `syncSpreadsheetId` is set on the project.
+   */
+  async createFromUrl(dto: CreateProjectFromUrlDto): Promise<ProjectResponseDto> {
     const spreadsheetId = this.spreadsheetIdFromExcelUrl(dto.excelUrl);
+    const syncSpreadsheetId = dto.syncUrl
+      ? this.spreadsheetIdFromExcelUrl(dto.syncUrl)
+      : null;
+
+    const info = await this.googleSheetsClient.getSpreadsheetInfo(spreadsheetId);
+    const projectName = dto.name?.trim() || info.title || spreadsheetId;
+    const projectId = dto.project_id ?? 0;
 
     const entity = this.projectRepository.create({
-      project_id: dto.project_id,
-      name: dto.name,
+      project_id: projectId,
+      name: projectName,
       spreadsheetId,
-      teamUrl: dto.teamUrl ?? null
+      syncSpreadsheetId,
+      teamUrl: dto.teamUrl ?? null,
     });
 
     if (dto.assignedTo != null) {
@@ -73,7 +87,23 @@ export class ProjectService {
     }
 
     const saved = await this.projectRepository.save(entity);
-    return this.toProjectResponse(saved);
+
+    // Persist all sheet tabs found in the spreadsheet
+    const sheetEntities = info.sheets.map((s) =>
+      this.sheetRepository.create({
+        project: saved,
+        sheetName: s.sheetName,
+        sheetId: s.sheetId,
+      }),
+    );
+    await this.sheetRepository.save(sheetEntities);
+
+    const withSheets = await this.projectRepository.findOne({
+      where: { id: saved.id },
+      relations: ['assignedTo', 'sheets'],
+    });
+
+    return this.toProjectResponse(withSheets!);
   }
 
   async updateAssignedTo(id: number, dto: UpdateProjectAssignedDto): Promise<ProjectResponseDto> {
@@ -123,8 +153,14 @@ export class ProjectService {
       project_id: project.project_id,
       name: project.name,
       spreadsheetId: project.spreadsheetId,
+      syncSpreadsheetId: project.syncSpreadsheetId ?? null,
       assignedToId,
-      teamUrl: project.teamUrl
+      teamUrl: project.teamUrl,
+      sheets: (project.sheets ?? []).map((s) => ({
+        id: s.id,
+        sheetName: s.sheetName,
+        sheetId: s.sheetId,
+      })),
     };
   }
 

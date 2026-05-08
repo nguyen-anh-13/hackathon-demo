@@ -13,6 +13,8 @@ import { TeamsNotificationProcessor } from './teams-notification.processor';
 import { TeamsWorkflowService } from './teams-workflow.service';
 import { IssueEntity } from '../../entities/issue.entity';
 import { ProjectEntity } from '../../entities/project.entity';
+import { GoogleSheetsClient } from '../../clients/google-sheets/google-sheets.client';
+import { SpreadsheetSyncService } from '../spreadsheet-sync/spreadsheet-sync.service';
 
 @Module({
   imports: [
@@ -35,7 +37,9 @@ import { ProjectEntity } from '../../entities/project.entity';
     },
     GitlabTicketProcessor,
     TeamsWorkflowService,
-    TeamsNotificationProcessor
+    TeamsNotificationProcessor,
+    GoogleSheetsClient,
+    SpreadsheetSyncService,
   ],
   exports: [SakuraGitlabService, GitlabTicketProcessor, GeminiService, TeamsWorkflowService]
 })

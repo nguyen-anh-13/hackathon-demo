@@ -1,11 +1,14 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 import { Repository } from 'typeorm';
 import { env } from '../../configs/env.config';
 import { IssueEntity } from '../../entities/issue.entity';
 import { UserEntity } from '../../entities/user.entity';
 import { GitlabTicketProcessor } from '../webhooks/gitlab-ticket.processor';
 import { SakuraGitlabService } from '../webhooks/gitlab.service';
+import { CREATE_GITLAB_ISSUE_FROM_ISSUE_JOB, GITLAB_TICKET_QUEUE } from '../webhooks/webhooks.constants';
 import { IssueFilterDto } from './dto/get-issues-query.dto';
 import { IssueListResponseDto } from './dto/issue-list-response.dto';
 import { IssueResponseDto } from './dto/issue-response.dto';
@@ -22,6 +25,8 @@ export class IssueService {
     private readonly issueRepository: Repository<IssueEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectQueue(GITLAB_TICKET_QUEUE)
+    private readonly gitlabTicketQueue: Queue,
     private readonly gitlabTicketProcessor: GitlabTicketProcessor,
     private readonly sakuraGitlabService: SakuraGitlabService,
     private readonly geminiService: GeminiService,
@@ -132,7 +137,7 @@ export class IssueService {
   }
 
   /**
-   * Runs GitLab issue creation inline (queue disabled). Label fields are read from DB as translated by the webhook worker.
+   * Enqueues GitLab issue creation job. Label fields are read from DB as translated by the webhook worker.
    * Assignee: existing `issue.assignedTo`, or default user `env.issue.defaultAssigneeUserId` (`users.id`).
    * If `can_send` is false, returns `{ received: false }` without running GitLab.
    * If `can_send` is true but `url` already points to a GitLab issue, syncs that issue (PUT) instead of creating a new one.
@@ -190,15 +195,11 @@ export class IssueService {
 
     await this.issueRepository.save(issue);
 
-    // await this.gitlabTicketQueue.add(
-    //   CREATE_GITLAB_ISSUE_FROM_ISSUE_JOB,
-    //   { issueId, gitlabAssignId: issue.assignedTo.userId },
-    //   { attempts: 3, removeOnComplete: true }
-    // );
-    await this.gitlabTicketProcessor.runCreateGitlabIssueFromIssuePayload({
-      issueId,
-      gitlabAssignId: issue.assignedTo.userId
-    });
+    await this.gitlabTicketQueue.add(
+      CREATE_GITLAB_ISSUE_FROM_ISSUE_JOB,
+      { issueId, gitlabAssignId: issue.assignedTo.userId },
+      { attempts: 3, removeOnComplete: true }
+    );
 
     return { received: true };
   }
