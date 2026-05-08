@@ -12,7 +12,7 @@ import { IssueEntity } from '../../entities/issue.entity';
 import { ProjectEntity } from '../../entities/project.entity';
 import { GeminiService } from './gemini.service';
 import { TeamsIssueNotificationPayload } from './teams-workflow.service';
-import { SEND_TEAMS_ISSUE_NOTIFICATION_JOB, TEAMS_NOTIFICATION_QUEUE } from './webhooks.constants';
+import { NOTIFY_TEAMS_ISSUE_JOB, TEAMS_NOTIFICATION_QUEUE } from './webhooks.constants';
 
 @Injectable()
 export abstract class GitlabIssueService {
@@ -283,7 +283,7 @@ export class SakuraGitlabService extends BaseGitlabService {
     const teamsContent = [cleanTranslateText].filter(Boolean).join('\n\n').slice(0, 8000);
     const assignee = issue.assignedTo;
 
-    await this.teamsNotificationQueue.add(SEND_TEAMS_ISSUE_NOTIFICATION_JOB, {
+    await this.teamsNotificationQueue.add(NOTIFY_TEAMS_ISSUE_JOB, {
       title: issueTitle,
       content: teamsContent,
       assigneeEmail: assignee ? String(assignee.email ?? '').trim() : '',

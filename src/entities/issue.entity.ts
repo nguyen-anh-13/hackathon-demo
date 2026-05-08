@@ -47,8 +47,11 @@ export class IssueEntity extends AppBaseEntity {
   @Column({ type: 'text', default: '' })
   translatedContent: string;
 
-  @Column({ type: 'varchar', length: 255, default: '' })
+  @Column({ type: 'text', default: '' })
   url: string;
+
+  @Column({ name: 'image_url', type: 'text', default: '' })
+  image_url: string;
 
   @Column({ name: 'is_sent', type: 'boolean', default: true })
   can_send: boolean;

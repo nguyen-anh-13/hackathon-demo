@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import type { CreateGitlabTicketPayload } from './gitlab-ticket.processor';
-import { CREATE_GITLAB_TICKET_JOB, GITLAB_TICKET_QUEUE } from './webhooks.constants';
+import { GITLAB_TICKET_QUEUE, UPSERT_ISSUE_FROM_SHEET_JOB } from './webhooks.constants';
 
 @Injectable()
 export class WebhooksService {
@@ -15,7 +15,7 @@ export class WebhooksService {
 
   async handleGoogleSheetsWebhook(payload: unknown): Promise<void> {
     await this.gitlabTicketQueue.add(
-      CREATE_GITLAB_TICKET_JOB,
+      UPSERT_ISSUE_FROM_SHEET_JOB,
       { payload: (payload ?? {}) as CreateGitlabTicketPayload['payload'] },
       { attempts: 3, removeOnComplete: true },
     );

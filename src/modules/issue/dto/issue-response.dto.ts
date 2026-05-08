@@ -53,7 +53,7 @@ export class IssueResponseDto {
   @ApiProperty()
   translatedContent: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'GitLab issue URL or base64 data URL of the source spreadsheet image' })
   url: string;
 
   @ApiProperty()

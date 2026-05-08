@@ -8,7 +8,7 @@ import { IssueEntity } from '../../entities/issue.entity';
 import { UserEntity } from '../../entities/user.entity';
 import { GitlabTicketProcessor } from '../webhooks/gitlab-ticket.processor';
 import { SakuraGitlabService } from '../webhooks/gitlab.service';
-import { CREATE_GITLAB_ISSUE_FROM_ISSUE_JOB, GITLAB_TICKET_QUEUE } from '../webhooks/webhooks.constants';
+import { GITLAB_TICKET_QUEUE, PUSH_ISSUE_TO_GITLAB_JOB } from '../webhooks/webhooks.constants';
 import { IssueFilterDto } from './dto/get-issues-query.dto';
 import { IssueListResponseDto } from './dto/issue-list-response.dto';
 import { IssueResponseDto } from './dto/issue-response.dto';
@@ -196,7 +196,7 @@ export class IssueService {
     await this.issueRepository.save(issue);
 
     await this.gitlabTicketQueue.add(
-      CREATE_GITLAB_ISSUE_FROM_ISSUE_JOB,
+      PUSH_ISSUE_TO_GITLAB_JOB,
       { issueId, gitlabAssignId: issue.assignedTo.userId },
       { attempts: 3, removeOnComplete: true }
     );

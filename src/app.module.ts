@@ -11,6 +11,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { IssueModule } from './modules/issue/issue.module';
 import { ProjectModule } from './modules/project/project.module';
 import { UserModule } from './modules/user/user.module';
+import { LabelModule } from './modules/label/label.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { UserModule } from './modules/user/user.module';
     IssueModule,
     ProjectModule,
     UserModule,
+    LabelModule,
     WebhooksModule
   ]
 })

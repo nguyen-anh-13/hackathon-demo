@@ -17,16 +17,20 @@ export interface SpreadsheetInfo {
 export class GoogleSheetsClient {
   private readonly logger = new Logger(GoogleSheetsClient.name);
   private sheets: sheets_v4.Sheets;
+  private googleAuth: InstanceType<typeof google.auth.GoogleAuth>;
 
   constructor() {
-    const auth = new google.auth.GoogleAuth({
+    this.googleAuth = new google.auth.GoogleAuth({
       credentials: {
         client_email: env.google.serviceAccountEmail,
         private_key: env.google.serviceAccountPrivateKey,
       },
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+      scopes: [
+        'https://www.googleapis.com/auth/spreadsheets',
+        'https://www.googleapis.com/auth/drive.readonly',
+      ],
     });
-    this.sheets = google.sheets({ version: 'v4', auth });
+    this.sheets = google.sheets({ version: 'v4', auth: this.googleAuth });
   }
 
   /** Lấy title và danh sách sheets (tên + internal sheetId) của một spreadsheet. */
